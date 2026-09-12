@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบประเมินความเครียด SPST-20</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- หน้าแรก -->
+    <div class="container">
+
+        <div class="icon">
+            🧠
+        </div>
+
+        <h1>แบบประเมินความเครียด</h1>
+
+        <h2>SPST-20</h2>
+
+        <p class="subtitle">
+            สำหรับนักศึกษาพยาบาล
+        </p>
+
+        <div class="description">
+           
+
+            <p>
+                ในระยะเวลา 6 เดือนที่ผ่านมามีเหตุการณ์ในข้อใด เกิดขึ้นกับคุณบ้าง
+                และคุณมีความรู้สึกอย่างไรต่อเหตุการณ์นั้น
+            </p>
+        </div>
+
+        <button id="startButton">
+            เริ่มทำแบบประเมิน
+        </button>
+
+    </div>
+
+
+    <!-- หน้าคำถาม -->
+    <div class="question-container" id="questionContainer">
+
+        <h2>แบบประเมิน SPST-20</h2>
+
+        <div class="progress-wrapper">
+
+    <div class="progress-info">
+        <span id="questionNumber">ข้อที่ 1 / 20</span>
+        <span id="progressPercent">5%</span>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+</div>
+
+        <div class="question-box">
+
+            <p id="questionText">
+                ตัวอย่างคำถามสำหรับทดสอบระบบ
+            </p>
+
+        </div>
+
+        <div class="answers">
+
+    <label>
+        <input type="radio" name="answer" value="1">
+        ไม่รู้สึกเครียด
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="2">
+        รู้สึกเครียดเล็กน้อย
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="3">
+        รู้สึกเครียดปานกลาง
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="4">
+        รู้สึกเครียดมาก
+    </label>
+
+    <label>
+        <input type="radio" name="answer" value="5">
+        รู้สึกเครียดมากที่สุด
+    </label>
+
+</div>
+       
+        <button id="nextButton">
+            ถัดไป
+        </button>
+
+    </div>
+
+</div>
+
+    <!-- หน้าผลการประเมิน -->
+    <div class="result-container" id="resultContainer">
+
+        <h2>
+            ผลการประเมิน
+        </h2>
+
+        <p>
+            คะแนนรวมของคุณ
+        </p>
+
+        <div class="score" id="score">
+            0 คะแนน
+        </div>
+
+        <h3 id="stressLevel">
+            ระดับความเครียด
+        </h3>
+
+        <p id="resultDescription">
+            คำอธิบายระดับความเครียดจะแสดงที่นี่
+        </p>
+
+        <a id="adviceButton" class="advice-button" href="advice.html" hidden aria-label="เปิดคำแนะนำเบื้องต้น">คำแนะนำ</a>
+
+    </div>
+
+    <!-- เชื่อม JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+</html>

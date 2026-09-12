@@ -1,0 +1,548 @@
+/* =========================
+   พื้นฐาน
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #f3e8ff,
+        #fce7f3,
+        #ede9fe
+    );
+
+    text-align: center;
+
+    margin: 0;
+    padding: 40px 20px;
+
+    min-height: 100vh;
+
+    color: #4a3f55;
+}
+
+
+/* =========================
+   หน้าแรก
+========================= */
+
+.container {
+    max-width: 520px;
+
+    margin: 40px auto;
+
+    background-color: rgba(255, 255, 255, 0.95);
+
+    padding: 45px 35px;
+
+    border-radius: 32px;
+
+    box-shadow:
+        0 15px 35px rgba(167, 139, 250, 0.18);
+}
+
+
+/* =========================
+   ไอคอน
+========================= */
+
+.icon {
+    width: 95px;
+    height: 95px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        135deg,
+        #ede9fe,
+        #fce7f3
+    );
+
+    border-radius: 50%;
+
+    font-size: 50px;
+
+    box-shadow:
+        0 10px 25px rgba(249, 168, 212, 0.25);
+}
+
+
+/* =========================
+   หัวข้อ
+========================= */
+
+h1 {
+    color: #8b5cf6;
+
+    font-size: 32px;
+
+    margin: 10px 0 5px;
+}
+
+h2 {
+    color: #d9468f;
+
+    margin: 5px 0 15px;
+}
+
+.subtitle {
+    color: #8a7b91;
+
+    font-size: 17px;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   คำอธิบาย
+========================= */
+
+.description {
+    background: linear-gradient(
+        135deg,
+        #faf5ff,
+        #fdf2f8
+    );
+
+    padding: 20px;
+
+    border-radius: 22px;
+
+    margin: 25px 0;
+
+    border: 1px solid #f3e8ff;
+}
+
+.description p {
+    color: #6b5b73;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    margin: 8px 0;
+}
+
+
+/* =========================
+   ปุ่ม
+========================= */
+
+button {
+    background: linear-gradient(
+        135deg,
+        #a78bfa,
+        #ec4899
+    );
+
+    color: white;
+
+    border: none;
+
+    padding: 15px 32px;
+
+    border-radius: 20px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(236, 72, 153, 0.22);
+
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px rgba(236, 72, 153, 0.3);
+}
+
+
+/* =========================
+   หน้าคำถาม
+========================= */
+
+.question-container {
+    display: none;
+
+    max-width: 600px;
+
+    margin: 40px auto;
+
+    background-color: white;
+
+    padding: 35px;
+
+    border-radius: 32px;
+
+    box-shadow:
+        0 15px 35px rgba(167, 139, 250, 0.18);
+}
+
+#questionNumber {
+    color: #a855f7;
+
+    font-weight: bold;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   กล่องคำถาม
+========================= */
+
+.question-box {
+    background: linear-gradient(
+        135deg,
+        #faf5ff,
+        #fdf2f8
+    );
+
+    padding: 25px;
+
+    border-radius: 22px;
+
+    margin: 25px 0;
+}
+
+#questionText {
+    color: #4a3f55;
+
+    font-size: 20px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================
+   ตัวเลือกคำตอบ
+========================= */
+
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.answers label {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    background: #ffffff;
+
+    padding: 17px 18px;
+
+    border-radius: 18px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    border: 2px solid #f1e7f8;
+
+    color: #5b4b63;
+
+    font-size: 16px;
+
+    transition: all 0.25s ease;
+
+    box-shadow: 0 3px 10px rgba(167, 139, 250, 0.06);
+}
+
+
+/* ตอนเอาเมาส์ไปวาง */
+
+.answers label:hover {
+    background: linear-gradient(
+        135deg,
+        #f5f3ff,
+        #fdf2f8
+    );
+
+    border-color: #d8b4fe;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 15px rgba(167, 139, 250, 0.12);
+}
+
+
+/* ซ่อน radio แบบเดิม */
+
+.answers input {
+    position: absolute;
+
+    opacity: 0;
+}
+
+
+/* สร้างวงกลมแทน radio */
+
+.answers label::before {
+    content: "";
+
+    width: 22px;
+    height: 22px;
+
+    min-width: 22px;
+
+    margin-right: 13px;
+
+    border-radius: 50%;
+
+    border: 2px solid #d8c9e8;
+
+    background: white;
+
+    transition: 0.2s;
+}
+
+
+/* เมื่อเลือกคำตอบ */
+
+.answers label:has(input:checked) {
+
+    background: linear-gradient(
+        135deg,
+        #f3e8ff,
+        #fce7f3
+    );
+
+    border-color: #c084fc;
+
+    box-shadow:
+        0 7px 18px rgba(192, 132, 252, 0.18);
+}
+
+
+/* วงกลมเมื่อเลือก */
+
+.answers label:has(input:checked)::before {
+
+    border-color: #a855f7;
+
+    background:
+        radial-gradient(
+            circle,
+            #a855f7 0 45%,
+            white 48% 100%
+        );
+}
+
+
+/* =========================
+   ปุ่มถัดไป
+========================= */
+
+#nextButton {
+    width: 100%;
+
+    margin-top: 5px;
+
+    padding: 16px;
+
+    border-radius: 18px;
+
+    font-size: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #a78bfa,
+        #ec4899
+    );
+}
+
+
+/* =========================
+   หน้าจอมือถือ
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 14px;
+    }
+
+    .container,
+    .question-container,
+    .result-container {
+        margin: 20px auto;
+
+        padding: 30px 20px;
+
+        border-radius: 26px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    #questionText {
+        font-size: 18px;
+    }
+
+    .answers label {
+        padding: 16px;
+
+        font-size: 15px;
+    }
+
+}
+
+/* =========================
+   หน้าผลการประเมิน
+========================= */
+
+.result-container {
+    display: none;
+
+    max-width: 600px;
+
+    margin: 40px auto;
+
+    background-color: white;
+
+    padding: 40px 30px;
+
+    border-radius: 32px;
+
+    box-shadow:
+        0 15px 35px rgba(167, 139, 250, 0.18);
+}
+
+.score {
+    font-size: 38px;
+
+    font-weight: bold;
+
+    color: #a855f7;
+
+    margin: 20px 0;
+}
+
+#stressLevel {
+    color: #d9468f;
+}
+
+#resultDescription {
+    color: #6b5b73;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   PROGRESS BAR (หลอดวิ่งความคืบหน้า)
+========================= */
+
+.progress-wrapper {
+    margin: 20px 0 25px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 9px;
+    color: #8b5cf6;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#progressPercent {
+    color: #d9468f;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #f3e8ff;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        #a78bfa,
+        #ec4899
+    );
+    transition: width 0.4s ease;
+}
+
+
+/* =========================
+   ปุ่มคำแนะนำ
+========================= */
+
+.advice-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 112px;
+    height: 112px;
+    margin: 24px auto 8px;
+    border: 2px solid #e9d5ff;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8b5cf6, #db2777);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    text-decoration: none;
+    animation: advice-glow 1.8s ease-in-out infinite alternate;
+}
+.advice-button[hidden] { display: none; }
+.advice-button::before,
+.advice-button::after {
+    content: "✦";
+    position: absolute;
+    color: #a855f7;
+    font-size: 24px;
+    animation: advice-sparkle 1.6s ease-in-out infinite alternate;
+}
+.advice-button::before { top: -12px; right: -6px; }
+.advice-button::after { bottom: -8px; left: -10px; animation-delay: .8s; }
+.advice-button:hover { background: linear-gradient(135deg, #7c3aed, #be185d); }
+.advice-button:focus-visible { outline: 3px solid #6d28d9; outline-offset: 8px; }
+
+@keyframes advice-glow {
+    from { box-shadow: 0 0 12px #c084fc, 0 0 24px #f9a8d4; }
+    to { box-shadow: 0 0 24px #c084fc, 0 0 46px #f9a8d4; }
+}
+
+@keyframes advice-sparkle {
+    from { opacity: .35; transform: scale(.7); }
+    to { opacity: 1; transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .advice-button, .advice-button::before, .advice-button::after { animation: none; }
+    .advice-button { box-shadow: 0 0 18px #c084fc; }
+}

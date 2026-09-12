@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หายใจไปกับน้องแมว</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#fff7ed;color:#493b36;font-family:Tahoma,sans-serif;display:grid;place-items:center;padding:20px}.card{width:min(100%,520px);text-align:center;background:#fffdf9;border:1px solid #f0dfcc;border-radius:32px;padding:28px;box-shadow:0 20px 60px #875a2110}.eyebrow{font-size:12px;letter-spacing:2px;color:#9c6d44}h1{font-size:26px;margin:12px 0}p{font-size:14px;line-height:1.8;color:#89766b}.stage{height:430px;position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(#fce8d5,#fff5e9 65%,#e9eddc);margin:20px 0}.cloud{position:absolute;top:30px;left:30px;color:#fff;font-size:65px;line-height:1}.track{position:absolute;left:50%;top:45px;bottom:45px;border-left:3px dashed #d7bea5}.label{position:absolute;right:18px;color:#a0856e;font-size:12px}.top{top:22px}.bottom{bottom:22px}.cat{position:absolute;left:50%;bottom:18px;width:140px;height:115px;margin-left:-70px;filter:drop-shadow(0 9px 5px #78513320);will-change:transform}.cat svg{width:100%;height:100%;overflow:visible}.running .leg-a{animation:trot .3s infinite alternate;transform-origin:60px 78px}.running .leg-b{animation:trot .3s infinite alternate-reverse;transform-origin:90px 78px}@keyframes trot{to{transform:rotate(16deg)}}.instruction{font-size:27px;font-weight:bold;color:#9e592e;min-height:40px}.count{font-size:14px;color:#89766b;margin:8px}.controls{display:flex;justify-content:center;gap:10px;margin:20px 0 10px}button{font:inherit;border:0;border-radius:999px;padding:13px 25px;cursor:pointer;background:#a95e34;color:white}button.secondary{background:#f2e9de;color:#72523d}button:focus-visible,a:focus-visible{outline:3px solid #7849ad;outline-offset:4px}.back{display:inline-block;margin-top:14px;font-size:13px;color:#89766b}.note{font-size:12px;margin-bottom:0}@media(prefers-reduced-motion:reduce){.running .leg-a,.running .leg-b{animation:none}}
+#belly{transform-box:fill-box;transform-origin:center;will-change:transform}
+.breath,.blow-mouth{opacity:0}.cat.exhale .breath,.cat.exhale .blow-mouth{opacity:1}.cat.exhale .smile{opacity:0}
+.cat.inhale .breath{opacity:.65;stroke-dasharray:5 7;animation:air-in 1s linear infinite}
+.cat.exhale .breath{stroke-dasharray:10 7;animation:air-out 1.2s linear infinite}
+@keyframes air-in{to{stroke-dashoffset:24}}@keyframes air-out{to{stroke-dashoffset:-34}}
+.cat.paused *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.cat .breath{animation:none!important}}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="eyebrow">เวลาพักเล็ก ๆ ของคุณ</div>
+<h1>หายใจไปกับน้องแมว</h1>
+<p>หายใจเข้า 4 · กลั้น 7 · หายใจออก 8 วินาที<br>หายใจสบาย ๆ ในจังหวะที่เหมาะกับคุณ</p>
+<div class="stage" aria-hidden="true">
+<div class="cloud">☁</div><div class="track"></div>
+<span class="label top">สูดลม · พองตัว</span><span class="label bottom">เป่าลม · ผ่อนคลาย</span>
+<div class="cat" id="cat">
+<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+<!-- เชือกทั้งสามผูกกับสายรัดบนหลังน้องแมว -->
+<defs>
+<radialGradient id="pinkShine" cx="30%" cy="25%" r="75%"><stop stop-color="#ffabd9"/><stop offset=".55" stop-color="#ff4b9a"/><stop offset="1" stop-color="#d91d73"/></radialGradient>
+<radialGradient id="blueShine" cx="30%" cy="25%" r="75%"><stop stop-color="#a3f4ff"/><stop offset=".55" stop-color="#26c6ed"/><stop offset="1" stop-color="#098fc6"/></radialGradient>
+<radialGradient id="yellowShine" cx="30%" cy="25%" r="75%"><stop stop-color="#fff6b1"/><stop offset=".55" stop-color="#ffd43b"/><stop offset="1" stop-color="#f4a51b"/></radialGradient>
+</defs>
+<g id="balloonPink">
+<path d="M100 52 Q53 12 47 -48" fill="none" stroke="#b97891" stroke-width="1.6"/>
+<ellipse cx="47" cy="-77" rx="24" ry="30" fill="url(#pinkShine)"/>
+<path d="M47 -48 l-4 6 h8 Z" fill="#df277e"/>
+<ellipse cx="39" cy="-89" rx="5" ry="9" fill="white" opacity=".6" transform="rotate(22 39 -89)"/>
+</g>
+<g id="balloonYellow">
+<path d="M100 52 Q137 9 149 -43" fill="none" stroke="#b49a52" stroke-width="1.6"/>
+<ellipse cx="149" cy="-72" rx="24" ry="30" fill="url(#yellowShine)"/>
+<path d="M149 -43 l-4 6 h8 Z" fill="#eaa71d"/>
+<ellipse cx="141" cy="-84" rx="5" ry="9" fill="white" opacity=".65" transform="rotate(22 141 -84)"/>
+</g>
+<g id="balloonBlue">
+<path d="M100 52 Q88 -1 98 -61" fill="none" stroke="#659caa" stroke-width="1.6"/>
+<ellipse cx="98" cy="-90" rx="25" ry="31" fill="url(#blueShine)"/>
+<path d="M98 -60 l-4 6 h8 Z" fill="#139dca"/>
+<ellipse cx="89" cy="-103" rx="5" ry="9" fill="white" opacity=".65" transform="rotate(22 89 -103)"/>
+</g>
+<!-- แมวพื้นขาว ลายปื้นสีส้มและดำ -->
+<path d="M119 76 Q153 77 144 44" fill="none" stroke="#39312e" stroke-width="13" stroke-linecap="round"/>
+<path d="M144 44 Q142 38 137 39" fill="none" stroke="#e99b4e" stroke-width="13" stroke-linecap="round"/>
+<g class="leg-a"><path d="M58 80 L49 103" stroke="#fffaf2" stroke-width="16" stroke-linecap="round"/><path d="M98 80 L107 102" stroke="#39312e" stroke-width="15" stroke-linecap="round"/></g>
+<g class="leg-b"><path d="M70 81 L76 104" stroke="#e99b4e" stroke-width="15" stroke-linecap="round"/><path d="M111 80 L117 101" stroke="#fffaf2" stroke-width="15" stroke-linecap="round"/></g>
+<g id="belly"><ellipse cx="88" cy="72" rx="40" ry="25" fill="#fffaf2" stroke="#59473c" stroke-width="2"/>
+<path d="M88 48 Q115 45 122 64 Q113 80 100 68 Q83 70 88 48" fill="#e99b4e"/>
+<path d="M72 67 Q87 60 95 77 Q92 93 75 94 Q65 84 72 67" fill="#39312e"/>
+</g><path d="M100 52 Q91 72 100 90" fill="none" stroke="#8066bc" stroke-width="4" stroke-linecap="round"/><circle cx="100" cy="52" r="3.5" fill="#e7d9ff" stroke="#8066bc" stroke-width="2"/><path d="M31 44 L28 14 L49 29 Q61 25 73 29 L91 14 L89 49 Q99 80 63 84 Q23 81 31 44" fill="#fffaf2" stroke="#59473c" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M31 42 L29 17 L49 31 Q58 42 46 53 Z" fill="#e99b4e"/>
+<path d="M69 29 L90 16 L88 48 Q77 60 66 48 Z" fill="#39312e"/>
+<path d="M34 24 L36 36 L43 32 M78 32 L85 24 L84 37" fill="#eaa29a"/>
+<path d="M43 57 Q48 52 53 57 M70 57 Q75 52 80 57" stroke="#493b36" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M58 64 L66 64 L62 68 Z" fill="#ce837e"/>
+<path class="smile" d="M62 68 Q57 76 52 69 M62 68 Q67 76 72 69" stroke="#493b36" stroke-width="2" fill="none"/>
+<ellipse cx="40" cy="65" rx="7" ry="4" fill="#f6c0ad"/><ellipse cx="82" cy="65" rx="7" ry="4" fill="#f6c0ad"/>
+<path d="M21 58 L35 61 M22 68 L35 67 M88 61 L102 58 M89 67 L102 69" stroke="#89766b" stroke-width="1.5" stroke-linecap="round"/>
+<ellipse class="blow-mouth" cx="62" cy="72" rx="4" ry="5" fill="#795247"/>
+<g class="breath" fill="none" stroke="#8bbec5" stroke-width="3" stroke-linecap="round">
+<path d="M54 76 Q36 85 20 78"/><path d="M54 81 Q32 94 12 89"/><path d="M55 86 Q41 102 25 99"/>
+</g>
+</svg>
+</div></div>
+<div id="instruction" class="instruction" role="status" aria-live="polite">พร้อมแล้ว เริ่มกันเลย</div>
+<div id="count" class="count">เข้า 4 วินาที · กลั้น 7 วินาที · ออก 8 วินาที</div>
+<div class="controls"><button id="toggle" type="button">เริ่มหายใจ</button><button id="reset" class="secondary" type="button">เริ่มใหม่</button></div>
+<p class="note">ทำเท่าที่สบาย ไม่ฝืนกลั้นหายใจ หากไม่สบายให้หยุดพัก</p>
+<a class="back" href="index.html">กลับหน้าแบบประเมิน</a>
+</main>
+<script>
+const cat=document.getElementById('cat');
+const belly=document.getElementById('belly');
+const balloons=['balloonPink','balloonBlue','balloonYellow'].map(id=>document.getElementById(id));
+const instruction=document.getElementById('instruction');
+const count=document.getElementById('count');
+const toggle=document.getElementById('toggle');
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+const phases=[{name:'inhale',label:'หายใจเข้า…',duration:4000},{name:'hold',label:'กลั้นหายใจ…',duration:7000},{name:'exhale',label:'หายใจออก…',duration:8000}];
+let running=false,elapsed=0,previous=null,frame=null,lastPhase=-1;
+function stateAt(time){
+ let within=time%19000,phase=0;
+ while(within>=phases[phase].duration){within-=phases[phase].duration;phase++;}
+ return {phase,within,fraction:within/phases[phase].duration};
+}
+function updateBalloons(time,phase,fraction){
+ // แกว่งรอบจุดผูกเดียวกัน และเอนตามความเร็วการขึ้นลง
+ const motion=phase===1?Math.sin(4*Math.PI*fraction):0;
+ balloons.forEach((balloon,index)=>{
+  const angle=reduced.matches?0:Math.sin(time/850+index*1.4)*3+motion*(4+index);
+  balloon.setAttribute('transform',`rotate(${angle} 100 52)`);
+ });
+}
+function render(){
+ const {phase,within,fraction}=stateAt(elapsed);
+ updateBalloons(elapsed,phase,fraction);
+ const eased=(1-Math.cos(Math.PI*fraction))/2;
+ const inflation=phase===0?eased:phase===1?1:1-eased;
+ const rise=phase===1?(1-Math.cos(4*Math.PI*fraction))/2:0;
+ cat.style.transform=`translateY(${-rise*(reduced.matches?0:160)}px)`;
+ belly.style.transform=reduced.matches?'scale(1)':`scale(${1+inflation*.3},${1+inflation*.45})`;
+ if(phase!==lastPhase){
+  cat.classList.remove('inhale','hold','exhale','running');
+  cat.classList.add(phases[phase].name);
+  if(phase===1)cat.classList.add('running');
+  instruction.textContent=phases[phase].label;lastPhase=phase;
+ }
+ count.textContent=`${Math.max(1,Math.ceil((phases[phase].duration-within)/1000))} วินาที · รอบที่ ${Math.floor(elapsed/19000)+1}`;
+}
+function tick(now){if(!running)return;if(previous!==null)elapsed+=now-previous;previous=now;render();frame=requestAnimationFrame(tick);}
+function pause(){running=false;previous=null;cancelAnimationFrame(frame);cat.classList.add('paused');toggle.textContent='ทำต่อ';instruction.textContent='พักสักครู่';lastPhase=-1;}
+toggle.addEventListener('click',()=>{if(running){pause();return;}running=true;previous=null;cat.classList.remove('paused');toggle.textContent='พัก';render();frame=requestAnimationFrame(tick);});
+document.getElementById('reset').addEventListener('click',()=>{pause();elapsed=0;balloons.forEach(balloon=>balloon.removeAttribute('transform'));cat.className='cat';cat.style.transform='translateY(0)';belly.style.transform='scale(1)';instruction.textContent='พร้อมแล้ว เริ่มกันเลย';count.textContent='เข้า 4 วินาที · กลั้น 7 วินาที · ออก 8 วินาที';toggle.textContent='เริ่มหายใจ';});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)pause();});
+</script>
+</body>
+</html>
+
+

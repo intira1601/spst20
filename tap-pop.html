@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap & Pop - Grounding Game</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: linear-gradient(135deg, #e0e7ff, #f3e8ff, #fce7f3); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; color: #4a3f55; }
+        
+        .game-container { text-align: center; z-index: 10; padding: 20px; }
+        h1 { font-size: 24px; color: #8b5cf6; margin-bottom: 5px; }
+        p.subtitle { font-size: 16px; color: #6b5b73; margin-bottom: 30px; }
+
+        .instruction-box { background: white; padding: 20px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(167, 139, 250, 0.15); font-size: 20px; font-weight: bold; color: #d9468f; margin-bottom: 40px; transition: 0.3s; }
+        
+        .bubble-area { position: relative; width: 100%; max-width: 400px; height: 300px; margin: 0 auto; }
+        
+        .bubble { position: absolute; width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; box-shadow: inset 0 0 15px rgba(255,255,255,0.8), 0 5px 15px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; font-size: 28px; cursor: pointer; user-select: none; backdrop-filter: blur(4px); animation: float 3s ease-in-out infinite; transition: transform 0.2s; }
+        .bubble:hover { transform: scale(1.1); }
+        .bubble.popped { animation: pop 0.3s forwards; pointer-events: none; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .success-screen { display: none; text-align: center; }
+        .success-screen h2 { color: #a855f7; font-size: 28px; }
+        
+        button.btn { background: linear-gradient(135deg, #a78bfa, #ec4899); color: white; border: none; padding: 15px 30px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.22); margin-top: 20px; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div id="gameUI" class="game-container">
+        <h1>🎈 Tap & Pop</h1>
+        <p class="subtitle">มองหาสิ่งรอบตัว แล้วจิ้มฟองสบู่ให้แตก!</p>
+        
+        <div id="instruction" class="instruction-box">โหลดด่าน...</div>
+        
+        <div id="bubbleArea" class="bubble-area"></div>
+    </div>
+
+    <div id="successUI" class="game-container success-screen">
+        <h2>🎉 ยอดเยี่ยมมาก!</h2>
+        <p class="subtitle">คุณดึงสติกลับมาอยู่กับปัจจุบันได้สำเร็จแล้วนะ<br>ร่างกายและจิตใจของคุณผ่อนคลายขึ้นแล้ว</p>
+        <a href="advice.html" class="btn">กลับหน้าคำแนะนำ</a>
+    </div>
+
+    <script>
+        const stages = [
+            { text: "👀 มองหา 5 สิ่งที่เห็นรอบตัวตอนนี้", count: 5, icon: "👀" },
+            { text: "✋ สัมผัส 4 สิ่งที่อยู่ใกล้ ๆ", count: 4, icon: "✋" },
+            { text: "👂 ตั้งใจฟัง 3 เสียงที่ได้ยิน", count: 3, icon: "👂" },
+            { text: "👃 สูดดม 2 กลิ่นรอบตัว", count: 2, icon: "👃" },
+            { text: "👅 รับรู้ 1 รสชาติในปาก", count: 1, icon: "👅" }
+        ];
+
+        let currentStage = 0;
+        let bubblesLeft = 0;
+
+        const instructionEl = document.getElementById("instruction");
+        const bubbleAreaEl = document.getElementById("bubbleArea");
+        const gameUI = document.getElementById("gameUI");
+        const successUI = document.getElementById("successUI");
+
+        function loadStage(index) {
+            if (index >= stages.length) {
+                gameUI.style.display = "none";
+                successUI.style.display = "block";
+                return;
+            }
+
+            const stage = stages[index];
+            instructionEl.innerHTML = stage.text;
+            bubblesLeft = stage.count;
+            bubbleAreaEl.innerHTML = "";
+
+            // สร้างฟองสบู่ตามจำนวนที่กำหนด
+            for (let i = 0; i < stage.count; i++) {
+                createBubble(stage.icon, i, stage.count);
+            }
+        }
+
+        function createBubble(icon, index, total) {
+            const bubble = document.createElement("div");
+            bubble.classList.add("bubble");
+            bubble.innerHTML = icon;
+
+            // สุ่มตำแหน่งให้อยู่ในกรอบ
+            const left = Math.random() * 80; // 0-80%
+            const top = Math.random() * 75;  // 0-75%
+            
+            bubble.style.left = left + "%";
+            bubble.style.top = top + "%";
+            
+            // หน่วงเวลาแอนิเมชันลอยให้แต่ละลูกไม่พร้อมกัน
+            bubble.style.animationDelay = (Math.random() * 2) + "s";
+
+            bubble.addEventListener("click", function() {
+                if (!this.classList.contains("popped")) {
+                    this.classList.add("popped");
+                    bubblesLeft--;
+                    
+                    if (bubblesLeft === 0) {
+                        setTimeout(() => {
+                            currentStage++;
+                            loadStage(currentStage);
+                        }, 500);
+                    }
+                }
+            });
+
+            bubbleAreaEl.appendChild(bubble);
+        }
+
+        // เริ่มเกมด่านแรก
+        loadStage(currentStage);
+    </script>
+</body>
+</html>
