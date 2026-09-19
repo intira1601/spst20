@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>หายใจด้วยกระบังลม</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+            color: #4a3b55;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 28px;
+            padding: 28px 22px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(150, 100, 180, 0.15);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #8b5cf6;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            margin: 0 0 22px;
+            color: #7c6a85;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* วิธีฝึก */
+        .info-box {
+            background: #faf5ff;
+            border-radius: 20px;
+            padding: 17px;
+            margin-bottom: 20px;
+            text-align: left;
+            border: 1px solid #eadcff;
+        }
+
+        .info-title {
+            color: #8b5cf6;
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        /* พื้นที่น้องแมว */
+        .cat-area {
+            position: relative;
+            width: 260px;
+            height: 280px;
+            margin: 0 auto 10px;
+        }
+
+        /* หู */
+        .ear {
+            position: absolute;
+            top: 22px;
+            width: 58px;
+            height: 58px;
+            background: #f8b4d9;
+            border-radius: 12px 35px 8px 35px;
+            z-index: 1;
+        }
+
+        .ear.left {
+            left: 58px;
+            transform: rotate(-18deg);
+        }
+
+        .ear.right {
+            right: 58px;
+            transform: rotate(108deg);
+        }
+
+        /* หัว */
+        .cat-head {
+            position: absolute;
+            top: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 145px;
+            height: 130px;
+            background: #fff7fb;
+            border: 4px solid #d8b4e8;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        /* ตา */
+        .eye {
+            position: absolute;
+            top: 48px;
+            width: 13px;
+            height: 17px;
+            background: #594466;
+            border-radius: 50%;
+        }
+
+        .eye.left {
+            left: 39px;
+        }
+
+        .eye.right {
+            right: 39px;
+        }
+
+        /* จมูก */
+        .nose {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 10px;
+            background: #ec8fbd;
+            border-radius: 50%;
+        }
+
+        /* ปาก */
+        .mouth {
+            position: absolute;
+            top: 79px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 15px;
+            border-bottom: 3px solid #7b5b78;
+            border-radius: 50%;
+        }
+
+        /* หนวด */
+        .whisker {
+            position: absolute;
+            width: 42px;
+            height: 2px;
+            background: #c4a9c8;
+        }
+
+        .whisker.w1 {
+            left: -35px;
+            top: 76px;
+            transform: rotate(8deg);
+        }
+
+        .whisker.w2 {
+            left: -35px;
+            top: 90px;
+            transform: rotate(-8deg);
+        }
+
+        .whisker.w3 {
+            right: -35px;
+            top: 76px;
+            transform: rotate(-8deg);
+        }
+
+        .whisker.w4 {
+            right: -35px;
+            top: 90px;
+            transform: rotate(8deg);
+        }
+
+        /* ตัวแมว */
+        .cat-body {
+            position: absolute;
+            top: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 100px;
+            background: #fff7fb;
+            border: 4px solid #d8b4e8;
+            border-radius: 70px 70px 45px 45px;
+            z-index: 1;
+        }
+
+        /* ท้อง */
+        .belly {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 95px;
+            height: 62px;
+            background: #f8d9ed;
+            border: 3px solid #eab7d8;
+            border-radius: 50%;
+
+            transition:
+                width 4s ease-in-out,
+                height 4s ease-in-out,
+                transform 4s ease-in-out;
+        }
+
+        /* แขน */
+        .paw {
+            position: absolute;
+            top: 205px;
+            width: 45px;
+            height: 28px;
+            background: #fff7fb;
+            border: 4px solid #d8b4e8;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .paw.left {
+            left: 35px;
+            transform: rotate(15deg);
+        }
+
+        .paw.right {
+            right: 35px;
+            transform: rotate(-15deg);
+        }
+
+        /* หาง */
+        .tail {
+            position: absolute;
+            right: 30px;
+            top: 190px;
+            width: 65px;
+            height: 75px;
+            border: 10px solid #d8b4e8;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 60px 0 0;
+            transform: rotate(20deg);
+            z-index: 0;
+        }
+
+        /* ท้องพอง */
+        .breathing-in .belly {
+            width: 118px;
+            height: 75px;
+            transform: translateX(-50%) scale(1.08);
+        }
+
+        /* ท้องยุบ */
+        .breathing-out .belly {
+            width: 78px;
+            height: 52px;
+            transform: translateX(-50%) scale(0.92);
+        }
+
+        /* ข้อความสถานะ */
+        .phase {
+            min-height: 36px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #a855f7;
+            margin-top: 3px;
+        }
+
+        .instruction {
+            min-height: 25px;
+            margin: 5px 0 12px;
+            font-size: 15px;
+            color: #7c6a85;
+            line-height: 1.5;
+        }
+
+        /* เวลา */
+        .session-time {
+            font-size: 36px;
+            font-weight: bold;
+            color: #8b5cf6;
+            margin-bottom: 17px;
+        }
+
+        /* ปุ่ม */
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 13px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            box-shadow: 0 6px 15px rgba(168, 85, 247, 0.25);
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .stop-button {
+            background: #f3e8ff;
+            color: #8b5cf6;
+            margin-left: 8px;
+        }
+
+        .stop-button:hover {
+            background: #eadcff;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .session-note {
+            margin-top: 17px;
+            font-size: 13px;
+            color: #8b7a91;
+        }
+
+        /* ข้อควรระวัง */
+        .note {
+            margin-top: 18px;
+            padding: 13px;
+            background: #fff7fb;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #806c80;
+            line-height: 1.6;
+        }
+
+        /* กลับ */
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 400px) {
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .cat-area {
+                transform: scale(0.9);
+                margin-top: -10px;
+                margin-bottom: -10px;
+            }
+
+            .phase {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🧘 หายใจด้วยกระบังลม</h1>
+
+    <p class="subtitle">
+        ลองหายใจช้า ๆ พร้อมกับน้องแมว 🐱<br>
+        สังเกตให้หน้าท้องพองตอนหายใจเข้า
+        และยุบตอนหายใจออก
+    </p>
+
+
+    <!-- วิธีฝึก -->
+
+    <div class="info-box">
+
+        <div class="info-title">
+            💜 วิธีฝึกการหายใจด้วยกระบังลม
+        </div>
+
+        <p>
+            นั่งหรือนอนในท่าที่สบาย
+        </p>
+
+        <p>
+            <strong>1.</strong>
+            วางมือหนึ่งข้างบนหน้าอก
+            และอีกข้างบนหน้าท้อง
+        </p>
+
+        <p>
+            <strong>2.</strong>
+            หายใจเข้าช้า ๆ ทางจมูก
+            ให้รู้สึกว่าหน้าท้องค่อย ๆ ขยาย
+        </p>
+
+        <p>
+            <strong>3.</strong>
+            ผ่อนลมหายใจออกช้า ๆ
+            และยาวขึ้นเล็กน้อย
+        </p>
+
+        <p>
+            <strong>4.</strong>
+            ทำต่อเนื่องประมาณ 5–10 นาที
+            โดยไม่ต้องกลั้นหรือฝืนการหายใจ
+        </p>
+
+    </div>
+
+
+    <!-- น้องแมว -->
+
+    <div class="cat-area" id="catArea">
+
+        <div class="ear left"></div>
+        <div class="ear right"></div>
+
+        <div class="cat-head">
+
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+
+            <div class="nose"></div>
+            <div class="mouth"></div>
+
+            <div class="whisker w1"></div>
+            <div class="whisker w2"></div>
+            <div class="whisker w3"></div>
+            <div class="whisker w4"></div>
+
+        </div>
+
+        <div class="cat-body">
+            <div class="belly"></div>
+        </div>
+
+        <div class="paw left"></div>
+        <div class="paw right"></div>
+
+        <div class="tail"></div>
+
+    </div>
+
+
+    <!-- สถานะ -->
+
+    <div class="phase" id="phase">
+        พร้อมแล้วหรือยัง? 💜
+    </div>
+
+    <div class="instruction" id="instruction">
+        กดเริ่ม แล้วสังเกตการพองและยุบของท้องน้องแมว
+    </div>
+
+
+    <!-- เวลาที่ฝึก -->
+
+    <div class="session-time" id="sessionTime">
+        00:00
+    </div>
+
+
+    <!-- ปุ่ม -->
+
+    <button
+        class="start-button"
+        id="startButton"
+        onclick="startBreathing()">
+        🐱 เริ่มฝึก
+    </button>
+
+    <button
+        class="stop-button"
+        id="stopButton"
+        onclick="stopBreathing()"
+        disabled>
+        ⏹️ หยุด
+    </button>
+
+
+    <div class="session-note">
+        🌿 แนะนำให้ฝึกต่อเนื่องประมาณ 5–10 นาที
+    </div>
+
+
+    <div class="note">
+        💗 ไม่ต้องพยายามสูดลมหายใจให้ลึกมาก
+        เพียงหายใจตามธรรมชาติอย่างช้า ๆ
+        และไม่ต้องกลั้นหรือฝืนการหายใจนะ
+    </div>
+
+
+    <a href="advice.html" class="back-button">
+        ← กลับไปหน้ากิจกรรม
+    </a>
+
+</div>
+
+
+<script>
+
+    /*
+        ==========================================
+        Diaphragmatic Breathing
+        การหายใจด้วยกระบังลม
+        ==========================================
+
+        จุดประสงค์ของ animation:
+        ให้น้องแมวเป็น "ตัวสาธิต"
+
+        หายใจเข้า
+        → ท้องพอง
+
+        หายใจออก
+        → ท้องยุบ
+
+        ไม่ได้บังคับให้ผู้ใช้ต้องหายใจ
+        ตามจังหวะอย่างเคร่งครัด
+    */
+
+
+    const phases = [
+
+        {
+            name: "in",
+            duration: 4000
+        },
+
+        {
+            name: "out",
+            duration: 5000
+        }
+
+    ];
+
+
+    let currentPhase = 0;
+
+    let phaseTimer = null;
+
+    let sessionTimer = null;
+
+    let running = false;
+
+    let elapsedSeconds = 0;
+
+
+    const catArea =
+        document.getElementById("catArea");
+
+    const phaseText =
+        document.getElementById("phase");
+
+    const instruction =
+        document.getElementById("instruction");
+
+    const sessionTime =
+        document.getElementById("sessionTime");
+
+    const startButton =
+        document.getElementById("startButton");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+
+    /*
+        เริ่มฝึก
+    */
+
+    function startBreathing() {
+
+        if (running) return;
+
+        running = true;
+
+        currentPhase = 0;
+
+        elapsedSeconds = 0;
+
+        startButton.disabled = true;
+
+        stopButton.disabled = false;
+
+
+        updateSessionTime();
+
+        startSessionTimer();
+
+        runPhase();
+
+    }
+
+
+    /*
+        animation การหายใจ
+    */
+
+    function runPhase() {
+
+        if (!running) return;
+
+
+        const phase =
+            phases[currentPhase];
+
+
+        catArea.classList.remove(
+            "breathing-in"
+        );
+
+        catArea.classList.remove(
+            "breathing-out"
+        );
+
+
+        /*
+            หายใจเข้า
+        */
+
+        if (phase.name === "in") {
+
+            catArea.classList.add(
+                "breathing-in"
+            );
+
+            phaseText.textContent =
+                "หายใจเข้าช้า ๆ 🌿";
+
+            instruction.textContent =
+                "หายใจเข้าทางจมูก และสังเกตให้หน้าท้องค่อย ๆ พอง";
+
+
+        /*
+            หายใจออก
+        */
+
+        } else {
+
+            catArea.classList.add(
+                "breathing-out"
+            );
+
+            phaseText.textContent =
+                "ผ่อนลมหายใจออกช้า ๆ 💜";
+
+            instruction.textContent =
+                "ผ่อนลมหายใจออก และสังเกตให้หน้าท้องค่อย ๆ ยุบ";
+
+        }
+
+
+        clearTimeout(phaseTimer);
+
+
+        phaseTimer = setTimeout(() => {
+
+            if (!running) return;
+
+
+            currentPhase++;
+
+
+            if (
+                currentPhase >=
+                phases.length
+            ) {
+
+                currentPhase = 0;
+
+            }
+
+
+            runPhase();
+
+
+        }, phase.duration);
+
+    }
+
+
+    /*
+        ตัวจับเวลาการฝึก
+    */
+
+    function startSessionTimer() {
+
+        clearInterval(sessionTimer);
+
+
+        sessionTimer =
+            setInterval(() => {
+
+                if (!running) return;
+
+                elapsedSeconds++;
+
+                updateSessionTime();
+
+            }, 1000);
+
+    }
+
+
+    /*
+        แสดงเวลาการฝึก
+    */
+
+    function updateSessionTime() {
+
+        const minutes =
+            Math.floor(
+                elapsedSeconds / 60
+            );
+
+        const seconds =
+            elapsedSeconds % 60;
+
+
+        sessionTime.textContent =
+            String(minutes).padStart(2, "0")
+            + ":" +
+            String(seconds).padStart(2, "0");
+
+    }
+
+
+    /*
+        หยุดฝึก
+    */
+
+    function stopBreathing() {
+
+        running = false;
+
+
+        clearTimeout(phaseTimer);
+
+        clearInterval(sessionTimer);
+
+
+        catArea.classList.remove(
+            "breathing-in"
+        );
+
+        catArea.classList.remove(
+            "breathing-out"
+        );
+
+
+        phaseText.textContent =
+            "พักก่อนก็ได้นะ 💜";
+
+
+        instruction.textContent =
+            "เมื่อพร้อม สามารถเริ่มใหม่ได้ทุกเมื่อ";
+
+
+        startButton.disabled = false;
+
+        stopButton.disabled = true;
+
+    }
+
+</script>
+
+</body>
+</html>

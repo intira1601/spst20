@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ฟังเพลงเพื่อผ่อนคลาย</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+    color: #4c1d95;
+    padding: 30px 20px;
+}
+
+.container {
+    max-width: 550px;
+    margin: auto;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 30px;
+    padding: 28px 22px;
+    box-shadow: 0 12px 35px rgba(168, 85, 247, 0.16);
+}
+
+h1 {
+    text-align: center;
+    margin: 0 0 8px;
+    font-size: 27px;
+    color: #6b21a8;
+}
+
+.subtitle {
+    text-align: center;
+    color: #7e22ce;
+    line-height: 1.7;
+    margin: 0 0 25px;
+    font-size: 15px;
+}
+
+/* กล่องเพลง */
+.music-card {
+    background: linear-gradient(135deg, #faf5ff, #fdf2f8);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #eadcff;
+    box-shadow: 0 5px 15px rgba(168, 85, 247, 0.08);
+}
+
+.music-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.music-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #d8b4fe, #f9a8d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.music-info {
+    flex: 1;
+}
+
+.music-info h2 {
+    font-size: 18px;
+    margin: 0 0 6px;
+    color: #581c87;
+}
+
+.music-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ปุ่ม YouTube */
+.music-button {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(135deg, #c084fc, #ec4899);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-weight: bold;
+    margin-top: 17px;
+    box-shadow: 0 5px 12px rgba(236, 72, 153, 0.18);
+    transition: 0.2s;
+}
+
+.music-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(236, 72, 153, 0.25);
+}
+
+.note {
+    background: #fdf2f8;
+    border-radius: 20px;
+    padding: 16px;
+    margin-top: 20px;
+    color: #831843;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.back-button {
+    display: block;
+    text-align: center;
+    margin-top: 23px;
+    color: #7e22ce;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>🎵 ฟังเพลงเพื่อผ่อนคลาย</h1>
+
+        <p class="subtitle">
+            ลองพักจากเรื่องที่กำลังคิดสักครู่<br>
+            แล้วเลือกเพลงที่เหมาะกับอารมณ์ของเธอในตอนนี้ 💜
+        </p>
+
+
+        <!-- เพลงที่ 1 -->
+        <div class="music-card">
+
+            <div class="music-top">
+
+                <div class="music-icon">
+                    🌌
+                </div>
+
+                <div class="music-info">
+
+                    <h2>
+                        Weightless
+                    </h2>
+
+                    <p>
+                        Marconi Union<br>
+                        เพลงบรรเลงแนว Ambient สำหรับช่วงพักใจ
+                    </p>
+
+                </div>
+
+            </div>
+
+            <a
+                href="https://www.youtube.com/watch?v=eQ6--TNre9k"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="music-button"
+            >
+                🎧 เปิดเพลงบน YouTube
+            </a>
+
+        </div>
+
+
+        <!-- เพลงที่ 2 -->
+        <div class="music-card">
+
+            <div class="music-top">
+
+                <div class="music-icon">
+                    🌧️
+                </div>
+
+                <div class="music-info">
+
+                    <h2>
+                        You & Me
+                    </h2>
+
+                    <p>
+                        Peder B. Helland<br>
+                        Relaxing Piano + Soft Rain
+                    </p>
+
+                </div>
+
+            </div>
+
+            <a
+                href="https://www.youtube.com/watch?v=Lp6XlsBm_Lw"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="music-button"
+            >
+                🎧 เปิดเพลงบน YouTube
+            </a>
+
+        </div>
+
+
+        <!-- เพลงที่ 3 -->
+        <div class="music-card">
+
+            <div class="music-top">
+
+                <div class="music-icon">
+                    🌿
+                </div>
+
+                <div class="music-info">
+
+                    <h2>
+                        Relaxing Piano Music
+                    </h2>
+
+                    <p>
+                        Yellow Brick Cinema<br>
+                        เพลงเปียโนบรรเลงสำหรับช่วงพัก
+                    </p>
+
+                </div>
+
+            </div>
+
+            <a
+                href="https://www.youtube.com/watch?v=6obKeeH7cQc"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="music-button"
+            >
+                🎧 เปิดเพลงบน YouTube
+            </a>
+
+        </div>
+
+
+        <!-- หมายเหตุ -->
+        <div class="note">
+
+            💡 <strong>ลองพักใจกับเสียงเพลง</strong><br>
+
+            เลือกเพลงที่ฟังแล้วรู้สึกสบายใจ
+            แล้วใช้เวลาสักครู่พักจากสิ่งที่กำลังทำ
+            หากฟังแล้วรู้สึกไม่สบายใจ สามารถหยุดฟังได้ทุกเมื่อ 💜
+
+        </div>
+
+
+        <!-- กลับหน้ากิจกรรม -->
+        <a href="advice.html" class="back-button">
+            ← กลับไปหน้ากิจกรรม
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

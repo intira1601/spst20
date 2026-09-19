@@ -19,7 +19,10 @@
 <main class="card">
 <div class="eyebrow">เวลาพักเล็ก ๆ ของคุณ</div>
 <h1>หายใจไปกับน้องแมว</h1>
-<p>หายใจเข้า 4 · กลั้น 7 · หายใจออก 8 วินาที<br>หายใจสบาย ๆ ในจังหวะที่เหมาะกับคุณ</p>
+<p>
+หายใจเข้าอย่างช้า ๆ 4 วินาที · กลั้นหายใจ 4 วินาที<br>
+หายใจออกช้า ๆ 4 วินาที · หยุดพัก 4 วินาที
+</p>
 <div class="stage" aria-hidden="true">
 <div class="cloud">☁</div><div class="track"></div>
 <span class="label top">สูดลม · พองตัว</span><span class="label bottom">เป่าลม · ผ่อนคลาย</span>
@@ -73,55 +76,371 @@
 </svg>
 </div></div>
 <div id="instruction" class="instruction" role="status" aria-live="polite">พร้อมแล้ว เริ่มกันเลย</div>
-<div id="count" class="count">เข้า 4 วินาที · กลั้น 7 วินาที · ออก 8 วินาที</div>
+<div id="count" class="count">เข้า 4 · กลั้น 4 · ออก 4 · พัก 4 วินาที</div>
 <div class="controls"><button id="toggle" type="button">เริ่มหายใจ</button><button id="reset" class="secondary" type="button">เริ่มใหม่</button></div>
 <p class="note">ทำเท่าที่สบาย ไม่ฝืนกลั้นหายใจ หากไม่สบายให้หยุดพัก</p>
 <a class="back" href="index.html">กลับหน้าแบบประเมิน</a>
 </main>
 <script>
-const cat=document.getElementById('cat');
-const belly=document.getElementById('belly');
-const balloons=['balloonPink','balloonBlue','balloonYellow'].map(id=>document.getElementById(id));
-const instruction=document.getElementById('instruction');
-const count=document.getElementById('count');
-const toggle=document.getElementById('toggle');
-const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-const phases=[{name:'inhale',label:'หายใจเข้า…',duration:4000},{name:'hold',label:'กลั้นหายใจ…',duration:7000},{name:'exhale',label:'หายใจออก…',duration:8000}];
-let running=false,elapsed=0,previous=null,frame=null,lastPhase=-1;
-function stateAt(time){
- let within=time%19000,phase=0;
- while(within>=phases[phase].duration){within-=phases[phase].duration;phase++;}
- return {phase,within,fraction:within/phases[phase].duration};
+const cat = document.getElementById('cat');
+const belly = document.getElementById('belly');
+
+const balloons = [
+    'balloonPink',
+    'balloonBlue',
+    'balloonYellow'
+].map(id => document.getElementById(id));
+
+const instruction = document.getElementById('instruction');
+const count = document.getElementById('count');
+const toggle = document.getElementById('toggle');
+const resetButton = document.getElementById('reset');
+
+const reduced = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+);
+
+/* =========================
+   Box Breathing 4-4-4-4
+========================= */
+
+const phases = [
+    {
+        name: 'inhale',
+        label: 'หายใจเข้าอย่างช้า ๆ…',
+        duration: 4000
+    },
+    {
+        name: 'hold',
+        label: 'กลั้นหายใจ…',
+        duration: 4000
+    },
+    {
+        name: 'exhale',
+        label: 'หายใจออกช้า ๆ…',
+        duration: 4000
+    },
+    {
+        name: 'rest',
+        label: 'หยุดพักหลังหายใจออก…',
+        duration: 4000
+    }
+];
+
+const totalCycle = 16000;
+
+let running = false;
+let elapsed = 0;
+let previous = null;
+let frame = null;
+let lastPhase = -1;
+
+
+/* =========================
+   หาว่าอยู่ช่วงไหน
+========================= */
+
+function stateAt(time) {
+
+    let within = time % totalCycle;
+    let phase = 0;
+
+    while (
+        phase < phases.length - 1 &&
+        within >= phases[phase].duration
+    ) {
+        within -= phases[phase].duration;
+        phase++;
+    }
+
+    return {
+        phase,
+        within,
+        fraction: within / phases[phase].duration
+    };
 }
-function updateBalloons(time,phase,fraction){
- // แกว่งรอบจุดผูกเดียวกัน และเอนตามความเร็วการขึ้นลง
- const motion=phase===1?Math.sin(4*Math.PI*fraction):0;
- balloons.forEach((balloon,index)=>{
-  const angle=reduced.matches?0:Math.sin(time/850+index*1.4)*3+motion*(4+index);
-  balloon.setAttribute('transform',`rotate(${angle} 100 52)`);
- });
+
+
+/* =========================
+   Animation ลูกโป่ง
+========================= */
+
+function updateBalloons(time, phase, fraction) {
+
+    const motion =
+        phase === 1
+            ? Math.sin(4 * Math.PI * fraction)
+            : 0;
+
+    balloons.forEach((balloon, index) => {
+
+        const angle = reduced.matches
+            ? 0
+            : Math.sin(time / 850 + index * 1.4) * 3
+              + motion * (4 + index);
+
+        balloon.setAttribute(
+            'transform',
+            `rotate(${angle} 100 52)`
+        );
+    });
 }
-function render(){
- const {phase,within,fraction}=stateAt(elapsed);
- updateBalloons(elapsed,phase,fraction);
- const eased=(1-Math.cos(Math.PI*fraction))/2;
- const inflation=phase===0?eased:phase===1?1:1-eased;
- const rise=phase===1?(1-Math.cos(4*Math.PI*fraction))/2:0;
- cat.style.transform=`translateY(${-rise*(reduced.matches?0:160)}px)`;
- belly.style.transform=reduced.matches?'scale(1)':`scale(${1+inflation*.3},${1+inflation*.45})`;
- if(phase!==lastPhase){
-  cat.classList.remove('inhale','hold','exhale','running');
-  cat.classList.add(phases[phase].name);
-  if(phase===1)cat.classList.add('running');
-  instruction.textContent=phases[phase].label;lastPhase=phase;
- }
- count.textContent=`${Math.max(1,Math.ceil((phases[phase].duration-within)/1000))} วินาที · รอบที่ ${Math.floor(elapsed/19000)+1}`;
+
+
+/* =========================
+   แสดง Animation
+========================= */
+
+function render() {
+
+    const {
+        phase,
+        within,
+        fraction
+    } = stateAt(elapsed);
+
+    updateBalloons(elapsed, phase, fraction);
+
+    /* ทำให้การเคลื่อนไหวนุ่ม */
+    const eased =
+        (1 - Math.cos(Math.PI * fraction)) / 2;
+
+    let inflation = 0;
+    let rise = 0;
+
+
+    /* หายใจเข้า 4 วินาที */
+    if (phase === 0) {
+
+        inflation = eased;
+        rise = eased;
+    }
+
+
+    /* กลั้น 4 วินาที */
+    else if (phase === 1) {
+
+        inflation = 1;
+        rise = 1;
+    }
+
+
+    /* หายใจออก 4 วินาที */
+    else if (phase === 2) {
+
+        inflation = 1 - eased;
+        rise = 1 - eased;
+    }
+
+
+    /* พัก 4 วินาที */
+    else if (phase === 3) {
+
+        inflation = 0;
+        rise = 0;
+    }
+
+
+    /* =========================
+       ขยับตัวแมวขึ้น-ลง
+    ========================= */
+
+    const moveY =
+        reduced.matches
+            ? 0
+            : -rise * 160;
+
+    cat.style.transform =
+        `translateY(${moveY}px)`;
+
+
+    /* =========================
+       พอง-ยุบตัว
+    ========================= */
+
+    if (reduced.matches) {
+
+        belly.style.transform = 'scale(1)';
+
+    } else {
+
+        belly.style.transform =
+            `scale(
+                ${1 + inflation * 0.3},
+                ${1 + inflation * 0.45}
+            )`;
+    }
+
+
+    /* =========================
+       เปลี่ยนข้อความ
+    ========================= */
+
+    if (phase !== lastPhase) {
+
+        cat.classList.remove(
+            'inhale',
+            'hold',
+            'exhale',
+            'rest',
+            'running',
+            'paused'
+        );
+
+        cat.classList.add(
+            phases[phase].name
+        );
+
+        instruction.textContent =
+            phases[phase].label;
+
+        lastPhase = phase;
+    }
+
+
+    /* =========================
+       ตัวนับเวลา
+    ========================= */
+
+    const remaining =
+        Math.max(
+            1,
+            Math.ceil(
+                (
+                    phases[phase].duration -
+                    within
+                ) / 1000
+            )
+        );
+
+    count.textContent =
+        `${remaining} วินาที · รอบที่ ${
+            Math.floor(elapsed / totalCycle) + 1
+        }`;
 }
-function tick(now){if(!running)return;if(previous!==null)elapsed+=now-previous;previous=now;render();frame=requestAnimationFrame(tick);}
-function pause(){running=false;previous=null;cancelAnimationFrame(frame);cat.classList.add('paused');toggle.textContent='ทำต่อ';instruction.textContent='พักสักครู่';lastPhase=-1;}
-toggle.addEventListener('click',()=>{if(running){pause();return;}running=true;previous=null;cat.classList.remove('paused');toggle.textContent='พัก';render();frame=requestAnimationFrame(tick);});
-document.getElementById('reset').addEventListener('click',()=>{pause();elapsed=0;balloons.forEach(balloon=>balloon.removeAttribute('transform'));cat.className='cat';cat.style.transform='translateY(0)';belly.style.transform='scale(1)';instruction.textContent='พร้อมแล้ว เริ่มกันเลย';count.textContent='เข้า 4 วินาที · กลั้น 7 วินาที · ออก 8 วินาที';toggle.textContent='เริ่มหายใจ';});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)pause();});
+
+
+/* =========================
+   เริ่ม Animation
+========================= */
+
+function tick(now) {
+
+    if (!running) return;
+
+    if (previous !== null) {
+        elapsed += now - previous;
+    }
+
+    previous = now;
+
+    render();
+
+    frame =
+        requestAnimationFrame(tick);
+}
+
+
+/* =========================
+   พัก
+========================= */
+
+function pause() {
+
+    running = false;
+    previous = null;
+
+    cancelAnimationFrame(frame);
+
+    cat.classList.add('paused');
+
+    toggle.textContent = 'ทำต่อ';
+
+    instruction.textContent = 'พักสักครู่';
+
+    lastPhase = -1;
+}
+
+
+/* =========================
+   ปุ่มเริ่ม / ทำต่อ
+========================= */
+
+toggle.addEventListener('click', () => {
+
+    if (running) {
+
+        pause();
+        return;
+    }
+
+    running = true;
+    previous = null;
+
+    cat.classList.remove('paused');
+
+    toggle.textContent = 'พัก';
+
+    render();
+
+    frame =
+        requestAnimationFrame(tick);
+});
+
+
+/* =========================
+   ปุ่มเริ่มใหม่
+========================= */
+
+resetButton.addEventListener('click', () => {
+
+    running = false;
+
+    cancelAnimationFrame(frame);
+
+    elapsed = 0;
+    previous = null;
+    lastPhase = -1;
+
+    balloons.forEach(balloon => {
+        balloon.removeAttribute('transform');
+    });
+
+    cat.className = 'cat';
+
+    cat.style.transform =
+        'translateY(0)';
+
+    belly.style.transform =
+        'scale(1)';
+
+    instruction.textContent =
+        'พร้อมแล้ว เริ่มกันเลย';
+
+    count.textContent =
+        'หายใจเข้า 4 · กลั้น 4 · หายใจออก 4 · พัก 4 วินาที';
+
+    toggle.textContent =
+        'เริ่มหายใจ';
+});
+
+
+/* =========================
+   ถ้าเปลี่ยนหน้าเว็บ
+========================= */
+
+document.addEventListener(
+    'visibilitychange',
+    () => {
+
+        if (
+            document.hidden &&
+            running
+        ) {
+            pause();
+        }
+    }
+);
 </script>
 </body>
 </html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>กระเป๋าที่หนักเกินไป</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #f3e8ff,
+                #fce7f3
+            );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 25px;
+        }
+
+        .container {
+            width: min(500px, 100%);
+
+            background: rgba(255,255,255,0.9);
+
+            border-radius: 30px;
+
+            padding: 30px 22px;
+
+            text-align: center;
+
+            box-shadow:
+                0 15px 40px rgba(100,60,130,0.15);
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+
+            color: #6d3c91;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #765f80;
+            line-height: 1.6;
+
+            margin-bottom: 15px;
+        }
+
+        .bag {
+            font-size: 100px;
+
+            margin: 10px 0 20px;
+
+            animation: floatBag 2s ease-in-out infinite;
+        }
+
+        @keyframes floatBag {
+
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+        }
+
+        .guide {
+            color: #765f80;
+
+            line-height: 1.7;
+
+            margin-bottom: 20px;
+        }
+
+        .items {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .item {
+            border: 2px solid #ecd9f8;
+
+            background: #fff;
+
+            border-radius: 18px;
+
+            padding: 13px 8px;
+
+            color: #684979;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        .item:hover {
+            transform: translateY(-3px);
+
+            border-color: #c084fc;
+
+            box-shadow:
+                0 6px 15px rgba(168,85,247,0.15);
+        }
+
+        .item.removed {
+            opacity: 0.35;
+
+            text-decoration: line-through;
+
+            transform: scale(0.95);
+        }
+
+        .message {
+            color: #7b479c;
+
+            font-weight: bold;
+
+            line-height: 1.6;
+
+            margin-top: 10px;
+        }
+
+        .reset-btn {
+            border: none;
+
+            background: #d8b4fe;
+
+            color: #57306f;
+
+            font-weight: bold;
+
+            padding: 12px 25px;
+
+            border-radius: 20px;
+
+            cursor: pointer;
+
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background: #c084fc;
+        }
+
+        @media (max-width: 480px) {
+
+            .container {
+                padding: 25px 17px;
+            }
+
+            .title {
+                font-size: 23px;
+            }
+
+            .bag {
+                font-size: 80px;
+            }
+
+            .items {
+                grid-template-columns: 1fr;
+            }
+
+        }
+        .weight {
+    display: inline-block;
+
+    margin-bottom: 20px;
+    padding: 9px 16px;
+
+    border-radius: 20px;
+
+    background: #f3e8ff;
+
+    color: #6d3c91;
+
+    font-weight: bold;
+}
+.back-btn {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #f3e8ff;
+
+    color: #6d3c91;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #e9d5ff;
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="title">
+            🎒 กระเป๋าที่หนักเกินไป
+        </div>
+
+        <div class="subtitle">
+            ลองวางสิ่งที่กำลังแบกไว้ลงทีละเรื่อง 💜
+        </div>
+
+        <div class="bag">
+    🎒
+</div>
+
+<div class="weight">
+    🎒 สิ่งที่กำลังแบกอยู่: <span id="weightCount">8</span> เรื่อง
+</div>
+
+        <div class="guide">
+            บางครั้งเราไม่ได้เหนื่อยจากเรื่องใดเรื่องหนึ่ง<br>
+            แต่เพราะกำลังแบกหลายเรื่องไว้พร้อมกัน
+        </div>
+
+        <div class="items">
+
+            <div class="item">📚 การเรียน</div>
+
+            <div class="item">📝 งาน</div>
+
+            <div class="item">🧪 การสอบ</div>
+
+            <div class="item">👥 ความสัมพันธ์</div>
+
+            <div class="item">🏠 ครอบครัว</div>
+
+            <div class="item">💰 การเงิน</div>
+
+            <div class="item">🩺 การฝึกปฏิบัติ</div>
+
+            <div class="item">😵 ความคาดหวัง</div>
+
+        </div>
+
+        <div class="message">
+            🌷 ลองเลือกสิ่งที่กำลังหนักใจ<br>
+            แล้ววางมันลงทีละเรื่อง
+        </div>
+
+       <button
+    class="back-btn"
+    onclick="history.back()"
+>
+    💜 กลับไปคำแนะนำ
+</button>
+
+    </div>
+
+
+    <script>
+
+        const items =
+            document.querySelectorAll(".item");
+
+
+       items.forEach(function(item) {
+
+    item.addEventListener("click", function() {
+
+        if (!item.classList.contains("removed")) {
+
+            item.classList.add("removed");
+
+            item.style.display = "none";
+
+            updateWeight();
+
+        }
+
+    });
+
+});
+
+
+function updateWeight() {
+
+    const remaining =
+        document.querySelectorAll(
+            ".item:not(.removed)"
+        ).length;
+
+    document.getElementById(
+        "weightCount"
+    ).textContent = remaining;
+
+
+    if (remaining === 0) {
+
+        document.querySelector(
+            ".message"
+        ).innerHTML = `
+            🌷 เก่งมากนะ 💜<br>
+            วันนี้คุณไม่จำเป็นต้องแบกทุกอย่างไว้พร้อมกัน<br>
+            ค่อย ๆ วางลงทีละเรื่องก็ได้
+        `;
+
+    }
+
+};
+
+
+        function resetItems() {
+
+            items.forEach(function(item) {
+
+                item.classList.remove("removed");
+
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>

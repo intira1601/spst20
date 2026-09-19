@@ -4,296 +4,1572 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กิจกรรมลดความเครียด</title>
+
     <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 30px 20px; font-family: Arial, sans-serif; background: linear-gradient(135deg, #f3e8ff, #fce7f3, #ede9fe); color: #4a3f55; min-height: 100vh; }
-        .container { max-width: 550px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); padding: 35px 25px; border-radius: 32px; box-shadow: 0 15px 35px rgba(167, 139, 250, 0.18); text-align: center; }
-        
-        .header-box { margin-bottom: 25px; }
-        h1 { color: #8b5cf6; font-size: 24px; margin: 0 0 10px 0; }
-        .subtitle { color: #6b5b73; font-size: 15px; margin: 0; line-height: 1.5; }
-        
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3, #ede9fe);
+            color: #4a3f55;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px 25px;
+            border-radius: 32px;
+            box-shadow: 0 15px 35px rgba(167, 139, 250, 0.18);
+            text-align: center;
+        }
+
+        .header-box {
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: #8b5cf6;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+
+        .subtitle {
+            color: #6b5b73;
+            font-size: 15px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
         /* กล่องแนะนำตามระดับความเครียด */
-        .recommend-box { background: linear-gradient(135deg, #faf5ff, #fdf2f8); border: 2px dashed #d8b4fe; padding: 15px; border-radius: 20px; margin-bottom: 25px; font-size: 15px; font-weight: bold; color: #d9468f; line-height: 1.6;}
+
+        .recommend-box {
+            background: linear-gradient(135deg, #faf5ff, #fdf2f8);
+            border: 2px dashed #d8b4fe;
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #d9468f;
+            line-height: 1.6;
+        }
 
         /* การ์ดกิจกรรม */
-        .cards { display: flex; flex-direction: column; gap: 15px; }
-        .card { background: white; border: 2px solid #f1e7f8; border-radius: 22px; padding: 20px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(167, 139, 250, 0.05); }
-        .card:hover { border-color: #c084fc; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(167, 139, 250, 0.15); }
-        .card .icon { font-size: 35px; background: linear-gradient(135deg, #f3e8ff, #fce7f3); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 18px; flex-shrink: 0; }
-        .card-text h3 { margin: 0 0 5px 0; color: #a855f7; font-size: 18px; }
-        .card-text p { margin: 0; font-size: 13px; color: #8a7b91; line-height: 1.4; }
+
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #f1e7f8;
+            border-radius: 22px;
+            padding: 20px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(167, 139, 250, 0.05);
+        }
+
+        .card:hover {
+            border-color: #c084fc;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(167, 139, 250, 0.15);
+        }
+
+        .card .icon {
+            font-size: 35px;
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            flex-shrink: 0;
+        }
+
+        .card-text h3 {
+            margin: 0 0 5px 0;
+            color: #a855f7;
+            font-size: 18px;
+        }
+
+        .card-text p {
+            margin: 0;
+            font-size: 13px;
+            color: #8a7b91;
+            line-height: 1.4;
+        }
 
         /* กล่องความรู้วิชาการ */
-        .science-box { margin-top: 35px; text-align: left; background: #f8fafc; padding: 20px; border-radius: 20px; font-size: 14px; border: 1px solid #e2e8f0; }
-        .science-box h4 { margin: 0 0 10px 0; color: #475569; display: flex; align-items: center; gap: 8px; }
-        .science-box p { color: #64748b; margin: 0 0 10px 0; line-height: 1.6; }
-        details { background: white; padding: 10px 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        summary { cursor: pointer; font-weight: bold; color: #64748b; outline: none; }
-        details p { margin-top: 10px; margin-bottom: 0; font-size: 13px; }
 
-        .back-btn { display: inline-block; margin-top: 25px; color: #8b5cf6; text-decoration: none; font-size: 15px; font-weight: bold; }
+        .science-box {
+            margin-top: 35px;
+            text-align: left;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid #e2e8f0;
+        }
 
-        /* Modal (Popup) สำหรับแสดงรายละเอียดกิจกรรม */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; padding: 20px; z-index: 999; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(4px); }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: white; max-width: 500px; width: 100%; border-radius: 32px; padding: 30px; position: relative; text-align: left; transform: translateY(20px); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 24px; color: #a1a1aa; cursor: pointer; border: none; background: none; }
-        .modal-header h2 { margin: 0 0 5px 0; color: #d9468f; display: flex; align-items: center; gap: 10px; }
-        .tag-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tag { font-size: 12px; background: #f3e8ff; color: #7c3aed; padding: 5px 12px; border-radius: 999px; font-weight: bold; }
-        .modal-section { margin-bottom: 20px; }
-        .modal-section h4 { color: #4a3f55; margin: 0 0 8px 0; font-size: 16px; }
-        .modal-section ul, .modal-section ol { margin: 0; padding-left: 20px; color: #6b5b73; font-size: 14.5px; line-height: 1.7; }
-        .action-btn { display: block; width: 100%; text-align: center; background: linear-gradient(135deg, #a78bfa, #ec4899); color: white; text-decoration: none; padding: 15px; border-radius: 20px; font-weight: bold; font-size: 16px; margin-top: 20px; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.22); }
+        .science-box h4 {
+            margin: 0 0 10px 0;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .science-box p {
+            color: #64748b;
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+        }
+
+        details {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #64748b;
+            outline: none;
+        }
+
+        details p {
+            margin-top: 10px;
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* ==============================
+           Modal รายละเอียดกิจกรรม
+        ============================== */
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 32px;
+            padding: 30px;
+            position: relative;
+            text-align: left;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 24px;
+            color: #a1a1aa;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .modal-header h2 {
+            margin: 0 0 5px 0;
+            color: #d9468f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-right: 35px;
+        }
+
+        .tag-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 12px;
+            background: #f3e8ff;
+            color: #7c3aed;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-weight: bold;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section h4 {
+            color: #4a3f55;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
+        .modal-section ul,
+        .modal-section ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #6b5b73;
+            font-size: 14.5px;
+            line-height: 1.7;
+        }
+
+        /* ==============================
+           ปุ่มกิจกรรม
+        ============================== */
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #a78bfa, #ec4899);
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.22);
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ==============================
+           QR POPUP
+        ============================== */
+
+        .qr-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            display: none;
+
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+
+            background: rgba(70, 45, 90, 0.65);
+
+            backdrop-filter: blur(5px);
+
+            z-index: 9999;
+        }
+
+        .qr-popup.active {
+            display: flex;
+        }
+
+        .qr-box {
+            position: relative;
+
+            width: 100%;
+            max-width: 380px;
+
+            background: white;
+
+            border-radius: 30px;
+
+            padding: 30px 20px;
+
+            text-align: center;
+
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+
+            animation: qrPop 0.25s ease;
+        }
+
+        @keyframes qrPop {
+
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        .qr-title {
+            color: #8b5cf6;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .qr-message {
+            color: #6b5b73;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 5px 0 18px;
+        }
+
+        .qr-box img {
+            display: block;
+
+            width: 230px;
+            height: 230px;
+
+            object-fit: contain;
+
+            margin: 0 auto;
+
+            background: white;
+
+            padding: 10px;
+
+            border: 3px solid #d8b4fe;
+
+            border-radius: 22px;
+        }
+
+        .qr-hint {
+            color: #9b7ab5;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-top: 18px;
+            margin-bottom: 0;
+        }
+
+        .qr-close {
+            position: absolute;
+
+            top: 12px;
+            right: 14px;
+
+            width: 38px;
+            height: 38px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #f3e8ff;
+
+            color: #8b5cf6;
+
+            font-size: 25px;
+
+            cursor: pointer;
+
+            line-height: 35px;
+        }
+
+        .qr-close:hover {
+            background: #e9d5ff;
+        }
+
+        @media (max-width: 480px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .container {
+                padding: 28px 18px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card .icon {
+                width: 55px;
+                height: 55px;
+                font-size: 30px;
+            }
+
+            .card-text h3 {
+                font-size: 16px;
+            }
+
+            .modal-content {
+                padding: 25px 20px;
+            }
+
+            .qr-box {
+                max-width: 340px;
+            }
+
+            .qr-box img {
+                width: 210px;
+                height: 210px;
+            }
+        }
+
     </style>
 </head>
+
 <body>
 
     <div class="container">
+
         <div class="header-box">
+
             <h1>🌿 เลือกกิจกรรมที่เหมาะกับคุณ</h1>
-            <p class="subtitle">ไม่ต้องทำทุกอย่าง เลือกกิจกรรมที่คุณรู้สึกว่า<br>สามารถทำได้ในตอนนี้</p>
+
+            <p class="subtitle">
+                ไม่ต้องทำทุกอย่าง เลือกกิจกรรมที่คุณรู้สึกว่า<br>
+                สามารถทำได้ในตอนนี้
+            </p>
+
         </div>
+
 
         <div id="recommendation" class="recommend-box">
             กำลังวิเคราะห์ผลประเมินของคุณ...
         </div>
 
+
         <div id="cardsContainer" class="cards"></div>
 
-        <a href="index.html" class="back-btn">กลับหน้าแบบประเมิน</a>
+
+        <a href="index.html" class="back-btn">
+            กลับหน้าแบบประเมิน
+        </a>
+
     </div>
 
-    <!-- Modal พื้นหลัง -->
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-        <div class="modal-content" id="modalContent" onclick="event.stopPropagation()">
-<button class="close-btn" onclick="closeModal()">✕</button>            <div id="modalBody"></div>
+
+    <!-- ==============================
+         Modal รายละเอียดกิจกรรม
+    ============================== -->
+
+    <div
+        class="modal-overlay"
+        id="modalOverlay"
+        onclick="closeModal(event)"
+    >
+
+        <div
+            class="modal-content"
+            id="modalContent"
+            onclick="event.stopPropagation()"
+        >
+
+            <button
+                class="close-btn"
+                onclick="closeModal()"
+            >
+                ✕
+            </button>
+
+            <div id="modalBody"></div>
+
         </div>
+
     </div>
+
+
+    <!-- ==============================
+         QR Popup
+    ============================== -->
+
+    <div
+        id="qrPopup"
+        class="qr-popup"
+        onclick="closeQR(event)"
+    >
+
+        <div
+            class="qr-box"
+            onclick="event.stopPropagation()"
+        >
+
+            <button
+                class="qr-close"
+                onclick="closeQR()"
+            >
+                ×
+            </button>
+
+            <div class="qr-title">
+                🤖 คุยกับเพื่อน AI
+            </div>
+
+            <p class="qr-message">
+                📱 สแกน QR Code เพื่อคุยกับเพื่อน AI 💬
+            </p>
+
+            <img
+                src="line-qr.png"
+                alt="QR Code สำหรับคุยกับเพื่อน AI"
+            >
+
+            <p class="qr-hint">
+                ✨ เปิดกล้องมือถือแล้วสแกน QR Code ได้เลย
+            </p>
+
+        </div>
+
+    </div>
+
 
     <script>
+
         const activityDB = {
+
+            /* ==========================================
+               ระดับน้อย
+            ========================================== */
+
             low: {
-                intro: "💡 จากผลประเมินของคุณ (เครียดน้อย)<br>เราแนะนำ: <span style='color:#a855f7'>ฝึกหายใจ</span> หรือ <span style='color:#a855f7'>ฟังเพลง</span> ก็เพียงพอแล้วค่ะ",
+
+                intro:
+                    "💡 จากผลประเมินของคุณ (เครียดน้อย)<br>เราแนะนำ: <span style='color:#a855f7'>ฟังเพลง</span> หรือ <span style='color:#a855f7'>ทำกิจกรรมที่ช่วยผ่อนคลาย</span> ก็เพียงพอแล้วค่ะ",
+
                 activities: [
+
                     {
-                        icon: "🌬️", title: "การกำหนดลมหายใจช้า", subtitle: "ผ่อนคลายได้ทันที | ไม่ต้องใช้อุปกรณ์",
-                        tags: ["ใช้เมื่อ: รู้สึกวิตกกังวล ใจไม่สงบ", "เวลา: ทำได้ตามต้องการ"],
+    icon: "🎵",
+
+    title: "ฟังเพลงเพื่อผ่อนคลาย",
+
+    subtitle:
+        "ใช้เวลา 20 นาที | เลือกเพลงที่ชอบ",
+
+    tags: [
+        "ใช้เมื่อ: รู้สึกเครียด ไม่สบายใจ",
+        "เวลา: ประมาณ 20 นาที"
+    ],
+
+    stepsTitle: "วิธีทำ",
+
+    steps: [
+        "เลือกเพลงหรือแนวเพลงที่คุณชอบและรู้สึกสบายใจ",
+        "หาสถานที่สงบ อุณหภูมิเหมาะสม มีสิ่งรบกวนน้อย",
+        "นั่งหรือนอนในท่าที่สบาย",
+        "ฟังเพลงอย่างต่อเนื่องประมาณ 20 นาที",
+        "ลองจดจ่อกับเสียง ทำนอง และจังหวะของเพลง"
+    ],
+
+    benefitsTitle: "ช่วยอะไร?",
+
+    benefits: [
+        "🧠 ดนตรีสามารถกระตุ้นการทำงานของระบบประสาทที่เกี่ยวข้องกับอารมณ์และระบบรางวัลของสมอง โดยเฉพาะวงจรที่เกี่ยวข้องกับโดพามีน (Dopamine) ซึ่งเป็นสารสื่อประสาทที่เกี่ยวข้องกับความพึงพอใจและความรู้สึกเชิงบวก",
+
+        "🌿 การฟังเพลงที่รู้สึกผ่อนคลายอาจช่วยลดการตอบสนองของร่างกายต่อความเครียด และมีความเกี่ยวข้องกับการเปลี่ยนแปลงของคอร์ติซอล (Cortisol) ซึ่งเป็นฮอร์โมนสำคัญในระบบตอบสนองต่อความเครียด",
+
+        "💜 เมื่อสมองได้รับสิ่งเร้าที่รู้สึกสบายใจ อาจช่วยลดการจดจ่อกับความกังวลและส่งเสริมสภาวะอารมณ์ที่ผ่อนคลายมากขึ้น",
+
+        "✨ จึงเหมาะกับการใช้เป็นกิจกรรมง่าย ๆ เพื่อพักสมองและดูแลอารมณ์ในชีวิตประจำวัน"
+    ],
+
+    actionText:
+        "🎵 ไปฟังเพลง",
+
+    actionLink:
+        "music.html"
+},
+
+
+                    {
+                        icon: "📝",
+
+                        title: "ระบายความรู้สึกแล้วขยำทิ้ง",
+
+                        subtitle:
+                            "ใช้เวลา 5–10 นาที | ระบายสิ่งที่อยู่ในใจออกมา",
+
+                        tags: [
+                            "เวลา: ประมาณ 5–10 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์เพิ่มเติม"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["นั่งในท่าที่สบายและผ่อนคลาย", "จดจ่อกับลมหายใจเข้าและลมหายใจออก", "ค่อย ๆ หายใจให้ช้าลงและสม่ำเสมอ โดยไม่ต้องฝืน", "หากมีความคิดอื่นเข้ามา ให้รับรู้แล้วค่อย ๆ กลับมาสนใจลมหายใจ", "ฝึกอย่างต่อเนื่องจนรู้สึกผ่อนคลายมากขึ้น"],
+
+                        steps: [
+                            "เปิดหน้ากิจกรรมระบายความรู้สึก",
+                            "เขียนหรือวาดสิ่งที่กำลังรู้สึกลงบนหน้าจอได้อย่างอิสระ",
+                            "ไม่ต้องกังวลเรื่องความสวยงามหรือความถูกต้อง",
+                            "เมื่อเขียนหรือวาดเสร็จแล้ว กดปุ่มขยำทิ้ง",
+                            "ลองสังเกตความรู้สึกของตัวเองหลังจากระบายสิ่งที่อยู่ในใจออกมา"
+                        ],
+
                         benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["🧘 ช่วยให้จิตใจสงบและมีสมาธิมากขึ้น", "🌿 ช่วยให้ร่างกายผ่อนคลาย", "💭 ช่วยลดการจดจ่อกับความคิดด้านลบ", "👀 ช่วยเพิ่มสติและการรับรู้ตนเอง"],
-                        actionText: "เริ่มหายใจกับน้องแมว", actionLink: "cat.html"
+
+                        benefits: [
+                            "🧠 การเขียนระบุความรู้สึกออกมาเป็นคำสามารถเกี่ยวข้องกับกระบวนการ affect labeling (การระบุและติดป้ายชื่ออารมณ์) ซึ่งสัมพันธ์กับการทำงานของ right ventrolateral prefrontal cortex (เปลือกสมองกลีบหน้าผากส่วนหน้าด้านขวา) และการลดการตอบสนองของ amygdala (อะมิกดะลา) ซึ่งเกี่ยวข้องกับการประมวลผลอารมณ์",
+                            "💭 การเปลี่ยนความรู้สึกที่อยู่ภายในให้เป็นคำหรือข้อความ ช่วยให้บุคคลสามารถมองและสังเกตอารมณ์ของตนเองได้ชัดเจนขึ้น แทนที่จะจมอยู่กับอารมณ์นั้นเพียงอย่างเดียว",
+                            "🌿 การขยำทิ้งหลังจากเขียนเสร็จสามารถทำหน้าที่เป็นสัญลักษณ์ของการสิ้นสุดกิจกรรมและการปล่อยวาง ช่วยสร้างความรู้สึกว่าได้วางเรื่องที่กำลังคิดหรือรู้สึกไว้ชั่วคราว",
+                            "💜 ดังนั้น กิจกรรมนี้อาจช่วยสนับสนุนการกำกับอารมณ์และลดความรุนแรงของความรู้สึกเครียดในช่วงเวลานั้นได้"
+                        ],
+
+                        actionText:
+                            "📝 ระบายความรู้สึกแล้วขยำทิ้ง",
+
+                        actionLink:
+                            "https://keen-arithmetic-ac7a4c.netlify.app"
                     },
+
+
                     {
-                        icon: "🎵", title: "ฟังเพลงเพื่อผ่อนคลาย", subtitle: "ใช้เวลา 20 นาที | เลือกเพลงที่ชอบ",
-                        tags: ["ใช้เมื่อ: รู้สึกเครียด ไม่สบายใจ", "เวลา: ประมาณ 20 นาที"],
+                        icon: "🔋",
+
+                        title: "เช็กก้อนแบตเตอรี่ใจ",
+
+                        subtitle:
+                            "ใช้เวลา 1–3 นาที | สำรวจพลังใจของตัวเอง",
+
+                        tags: [
+                            "เวลา: ประมาณ 1–3 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["เลือกเพลงหรือแนวเพลงที่คุณชอบและรู้สึกสบายใจ", "หาสถานที่สงบ อุณหภูมิเหมาะสม มีสิ่งรบกวนน้อย", "นั่งหรือนอนในท่าที่สบาย", "ฟังเพลงอย่างต่อเนื่องประมาณ 20 นาที", "ลองจดจ่อกับเสียง ทำนอง และจังหวะของเพลง"],
+
+                        steps: [
+                            "ลองหยุดพักสักครู่และสังเกตความรู้สึกของตัวเอง",
+                            "เลือกเปอร์เซ็นต์แบตเตอรี่ที่ตรงกับความรู้สึกของคุณในตอนนี้",
+                            "ทำภารกิจเล็ก ๆ ที่ได้รับตามระดับแบตเตอรี่",
+                            "เมื่อทำเสร็จแล้ว ลองสังเกตว่าความรู้สึกของตัวเองเปลี่ยนไปอย่างไร"
+                        ],
+
                         benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["🎧 ช่วยให้รู้สึกผ่อนคลายและสงบขึ้น", "💭 ช่วยเบี่ยงเบนความสนใจจากเรื่องที่กังวล", "😊 ช่วยลดอารมณ์ด้านลบ เพิ่มความสบายใจ"]
-                    },
-                    {
-                        icon: "🚶", title: "การเดินเพื่อผ่อนคลาย", subtitle: "ใช้เวลา 10–15 นาที | หากมีพื้นที่สีเขียวจะยิ่งดี",
-                        tags: ["ใช้เมื่อ: คิดมาก อยากเปลี่ยนบรรยากาศ", "เวลา: 10–15 นาที"],
-                        stepsTitle: "วิธีทำ",
-                        steps: ["เลือกสถานที่ที่ปลอดภัยและเดินได้สะดวก", "เดินด้วยความเร็วสบาย ๆ ไม่ต้องเร่งรีบ", "ระหว่างเดิน ลองสังเกตสิ่งรอบตัว เช่น ต้นไม้ แสงแดด เสียง", "หากเป็นไปได้ ลองเลือกพื้นที่ที่มีธรรมชาติหรือสีเขียว", "เดินประมาณ 10–15 นาที หรือตามความเหมาะสม"],
-                        benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["🌿 ช่วยลดความตึงเครียด ทำให้รู้สึกผ่อนคลาย", "🧠 ช่วยเบี่ยงเบนความสนใจจากความคิดที่กังวล", "☀️ ลดระดับฮอร์โมนความเครียด (หากอยู่กับธรรมชาติ)", "❤️ เคลื่อนไหวร่างกายช่วยส่งเสริมระบบประสาท"]
+
+                        benefits: [
+                           "🧠 การหยุดสังเกตและประเมินสภาวะของตนเองช่วยให้เกิดการรับรู้ความรู้สึกและอารมณ์ของตัวเองอย่างตั้งใจ",
+                           "💭 หากมีการระบุชื่ออารมณ์หรือความรู้สึกที่กำลังเกิดขึ้น กระบวนการนี้สอดคล้องกับ affect labeling (การระบุและติดป้ายชื่ออารมณ์) ซึ่งเกี่ยวข้องกับการทำงานของ right ventrolateral prefrontal cortex และการลดการตอบสนองของ amygdala",
+                           "🌿 กระบวนการดังกล่าวอาจช่วยให้บุคคลถอยออกมาสังเกตอารมณ์ของตนเองมากขึ้น และสนับสนุนการกำกับอารมณ์แทนการตอบสนองต่อความรู้สึกโดยทันที",
+                           "💜 การรู้ว่าตอนนี้ตัวเองมีพลังใจมากหรือน้อย ยังช่วยให้เลือกวิธีดูแลตัวเองที่เหมาะสมกับสภาวะของตนเองได้"
+                        ],
+
+                        actionText:
+                            "🔋 เช็กแบตเตอรี่ใจของฉัน",
+
+                        actionLink:
+                            "battery.html"
                     }
+
                 ]
+
             },
+
+
+            /* ==========================================
+               ระดับปานกลาง
+            ========================================== */
+
             medium: {
-                intro: "💡 จากผลประเมินของคุณ (เครียดปานกลาง)<br>เมื่อรู้สึกเครียด กดดัน คิดมาก ลองเลือกกิจกรรมที่เหมาะกับตัวเอง เพื่อช่วยผ่อนคลายทั้งร่างกายและจิตใจ",
+
+                intro:
+                    "💡 จากผลประเมินของคุณ (เครียดปานกลาง)<br>ลองเลือกกิจกรรมที่เหมาะกับตัวเอง เพื่อช่วยผ่อนคลายทั้งร่างกายและจิตใจ",
+
                 activities: [
+
                     {
-                        icon: "🌬️", title: "การหายใจแบบกล่อง (Box Breathing)", subtitle: "ใช้เวลา 3–5 นาที | ไม่ต้องใช้อุปกรณ์",
-                        tags: ["เวลา: ประมาณ 3–5 นาที", "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"],
+                        icon: "🌬️",
+
+                        title: "การหายใจแบบกล่อง (Box Breathing)",
+
+                        subtitle:
+                            "ใช้เวลา 3–5 นาที | ฝึกไปพร้อมกับน้องแมว",
+
+                        tags: [
+                            "เวลา: ประมาณ 3–5 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["นั่งในท่าที่สบายและผ่อนคลาย", "หายใจเข้าอย่างช้า ๆ 4 วินาที", "กลั้นหายใจ 4 วินาที", "หายใจออกช้า ๆ 4 วินาที", "หยุดพักหลังหายใจออก 4 วินาที", "ทำซ้ำประมาณ 3–5 นาที โดยไม่ฝืนการหายใจ"],
+
+                        steps: [
+                            "นั่งในท่าที่สบายและผ่อนคลาย",
+                            "หายใจเข้าอย่างช้า ๆ 4 วินาที",
+                            "กลั้นหายใจ 4 วินาที",
+                            "หายใจออกช้า ๆ 4 วินาที",
+                            "หยุดพักหลังหายใจออก 4 วินาที",
+                            "ทำซ้ำประมาณ 3–5 นาที โดยไม่ฝืนการหายใจ"
+                        ],
+
                         benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["💚 ช่วยให้การหายใจเป็นจังหวะและสม่ำเสมอ", "💚 ช่วยลดความตึงเครียดและความรู้สึกกดดัน", "💚 ช่วยให้จิตใจจดจ่ออยู่กับปัจจุบัน", "💚 ช่วยส่งเสริมความรู้สึกสงบและผ่อนคลาย"]
+
+                        benefits: [
+                             "🧠 การควบคุมจังหวะการหายใจอย่างเป็นระบบสามารถส่งผลต่อระบบประสาทอัตโนมัติ (Autonomic Nervous System) ซึ่งเกี่ยวข้องกับการควบคุมการทำงานของหัวใจและการตอบสนองต่อความเครียด",
+
+                             "🌿 การหายใจอย่างช้าและเป็นจังหวะมีความเกี่ยวข้องกับการเพิ่มกิจกรรมของระบบพาราซิมพาเทติก (Parasympathetic Nervous System) และ vagal activity (กิจกรรมของเส้นประสาทเวกัส) ซึ่งมีบทบาทในการส่งเสริมภาวะผ่อนคลายและการควบคุมการทำงานของหัวใจ",
+
+                             "💭 การจดจ่อกับการนับจังหวะ 4–4–4–4 ช่วยให้ความสนใจอยู่กับลมหายใจและปัจจุบันมากขึ้น จึงอาจช่วยลดการจดจ่อกับความคิดหรือความกังวลที่วนซ้ำ",
+
+                             "💜 การฝึกอย่างต่อเนื่องจึงอาจช่วยลดความเครียดและความวิตกกังวลในระยะสั้น พร้อมส่งเสริมความสามารถของร่างกายในการกลับเข้าสู่ภาวะผ่อนคลาย"
+                        ],
+
+                        actionText:
+                            "🐱 เริ่มหายใจไปกับน้องแมว",
+
+                        actionLink:
+                            "cat.html"
                     },
+
+
                     {
-                        icon: "💬", title: "การพูดกับตนเองเชิงบวก", subtitle: "ใช้เวลา 10–15 นาที | ไม่ต้องใช้อุปกรณ์",
-                        tags: ["เวลา: ประมาณ 10–15 นาที", "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"],
+                        icon: "💬",
+
+                        title:
+                            "การพูดกับตนเองเชิงบวก (Positive Self-Talk)",
+
+                        subtitle:
+                            "ใช้เวลา 10–15 นาที | ไม่ต้องใช้อุปกรณ์",
+
+                        tags: [
+                            "เวลา: ประมาณ 10–15 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["สังเกตคำพูดหรือความคิดด้านลบที่เกิดขึ้น เช่น “ฉันทำไม่ได้”", "ลองถามตัวเองว่า ความคิดนั้นเป็นความจริงทั้งหมดหรือไม่", "เปลี่ยนเป็นคำพูดที่เป็นจริงและช่วยให้มีกำลังใจ เช่น “ฉันจะค่อย ๆ แก้ปัญหาทีละอย่าง”", "พูดกับตนเองในใจหรือออกเสียงซ้ำ ๆ", "นำคำพูดนั้นมาใช้เมื่อต้องเผชิญสถานการณ์ที่ทำให้เกิดความเครียด"],
+
+                        steps: [
+                            "สังเกตคำพูดหรือความคิดด้านลบที่เกิดขึ้น เช่น “ฉันทำไม่ได้”",
+                            "ลองถามตัวเองว่า ความคิดนั้นเป็นความจริงทั้งหมดหรือไม่",
+                            "เปลี่ยนเป็นคำพูดที่เป็นจริงและช่วยให้มีกำลังใจ เช่น “ฉันจะค่อย ๆ แก้ปัญหาทีละอย่าง”",
+                            "พูดกับตนเองในใจหรือออกเสียงซ้ำ ๆ",
+                            "นำคำพูดนั้นมาใช้เมื่อต้องเผชิญสถานการณ์ที่ทำให้เกิดความเครียด"
+                        ],
+
                         benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["💚 ช่วยลดความคิดเชิงลบและการตำหนิตนเอง", "💚 ช่วยให้มองสถานการณ์อย่างมีเหตุผลมากขึ้น", "💚 ช่วยควบคุมอารมณ์เมื่อรู้สึกเครียดหรือกดดัน", "💚 ช่วยเพิ่มความมั่นใจในการรับมือกับปัญหา"],
-                        actionText: "เปิดกล่องสุ่มพลังใจ", actionLink: "gacha.html"
+
+                        benefits: [
+                             "🧠 การพูดกับตนเองเชิงบวกช่วยให้สมองทบทวนและปรับรูปแบบความคิดที่เกิดขึ้นในสถานการณ์ที่ทำให้เกิดความเครียด",
+
+                "💭 การเปลี่ยนจากความคิดเชิงลบ เช่น “ฉันทำไม่ได้” เป็นข้อความที่เป็นจริงและให้กำลังใจ อาจช่วยลดการตีความสถานการณ์ในทางลบ และช่วยให้สามารถมองปัญหาอย่างเป็นระบบมากขึ้น",
+
+                "🌿 กระบวนการปรับความคิดและอารมณ์มีความเกี่ยวข้องกับการทำงานของสมองส่วนที่ใช้ในการควบคุมและกำกับอารมณ์ รวมถึงระบบสารสื่อประสาทที่เกี่ยวข้องกับอารมณ์และแรงจูงใจ เช่น Serotonin (เซโรโทนิน) และ Dopamine (โดพามีน)",
+
+                "💜 จึงอาจช่วยส่งเสริมอารมณ์เชิงบวก ลดความวิตกกังวล และเพิ่มความสามารถในการรับมือกับสถานการณ์ที่ก่อให้เกิดความเครียด"
+                        ],
+
+                        actionText:
+                            "💬 ลองพูดกับตัวเองอย่างใจดี",
+
+                        actionLink:
+                            "selftalk.html"
                     },
+
+
                     {
-                        icon: "💆", title: "การผ่อนคลายกล้ามเนื้อแบบก้าวหน้า", subtitle: "ใช้เวลา 10–15 นาที | ไม่ต้องใช้อุปกรณ์",
-                        tags: ["เวลา: ประมาณ 10–15 นาที", "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"],
+                        icon: "💆",
+
+                        title:
+                            "Progressive Muscle Relaxation",
+
+                        subtitle:
+                            "ใช้เวลา 10–15 นาที | ไม่ต้องใช้อุปกรณ์",
+
+                        tags: [
+                            "เวลา: ประมาณ 10–15 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["นั่งหรือนอนในท่าที่สบาย", "เริ่มจากกล้ามเนื้อทีละส่วน เช่น มือ แขน ไหล่ ใบหน้า และขา", "เกร็งกล้ามเนื้อส่วนนั้นเบา ๆ ประมาณ 5 วินาที", "ค่อย ๆ คลายกล้ามเนื้อและสังเกตความรู้สึกที่ผ่อนคลาย", "ทำซ้ำกับกล้ามเนื้อส่วนอื่น ๆ จนครบ", "เมื่อเสร็จแล้ว หายใจตามปกติและสังเกตว่าร่างกายรู้สึกผ่อนคลายขึ้นหรือไม่"],
+
+                        steps: [
+                            "นั่งหรือนอนในท่าที่สบาย",
+                            "เริ่มจากกล้ามเนื้อทีละส่วน เช่น มือ แขน ไหล่ ใบหน้า และขา",
+                            "เกร็งกล้ามเนื้อส่วนนั้นเบา ๆ ประมาณ 5 วินาที",
+                            "ค่อย ๆ คลายกล้ามเนื้อและสังเกตความรู้สึกที่ผ่อนคลาย",
+                            "ทำซ้ำกับกล้ามเนื้อส่วนอื่น ๆ จนครบ",
+                            "เมื่อเสร็จแล้ว หายใจตามปกติและสังเกตว่าร่างกายรู้สึกผ่อนคลายขึ้นหรือไม่"
+                        ],
+
                         benefitsTitle: "ช่วยอะไร?",
-                        benefits: ["💚 ช่วยลดความตึงของกล้ามเนื้อ", "💚 ช่วยให้ร่างกายและจิตใจผ่อนคลาย", "💚 ช่วยลดความเครียดและความวิตกกังวล", "💚 ช่วยให้สังเกตและรับรู้ความตึงเครียดในร่างกายได้ดีขึ้น"]
+
+                        benefits: [
+                            "🧠 การเกร็งและคลายกล้ามเนื้อทีละส่วนช่วยให้สมองรับรู้ความแตกต่างระหว่างภาวะกล้ามเนื้อตึงและภาวะผ่อนคลาย ทำให้สังเกตความตึงของร่างกายได้ชัดเจนขึ้น",
+
+                "🌿 เมื่อค่อย ๆ คลายกล้ามเนื้อ ร่างกายสามารถลดภาวะ sympathetic arousal (ภาวะตื่นตัวจากความเครียด) และส่งเสริมการทำงานที่เกี่ยวข้องกับ parasympathetic activity (กิจกรรมของระบบประสาทพาราซิมพาเทติก)",
+
+                "💓 การลดความตึงของกล้ามเนื้อและการผ่อนคลายของระบบประสาทอัตโนมัติอาจสัมพันธ์กับการลดอัตราการเต้นของหัวใจและความตึงตัวของร่างกาย",
+
+                "💜 จึงอาจช่วยลดความรู้สึกเครียดและส่งเสริมให้ร่างกายกลับเข้าสู่ภาวะผ่อนคลายได้มากขึ้น"
+                        ],
+
+                        actionText:
+                            "🎥 เปิดคลิปฝึก PMR",
+
+                        actionLink:
+                            "https://www.youtube.com/watch?v=2IJUD-e14FY"
                     }
+
                 ]
+
             },
+
+
+            /* ==========================================
+               ระดับสูง
+            ========================================== */
+
             high: {
-                intro: "💡 จากผลประเมินของคุณ (เครียดสูง)<br>ลองให้เวลาตัวเองพักสักนิด เลือกกิจกรรมดึงสติกลับมาที่ปัจจุบัน หรือพูดคุยระบายความรู้สึกกับช่องทางด้านล่างนี้นะคะ",
+
+                intro:
+                    "💡 จากผลประเมินของคุณ (เครียดสูง)<br>ลองเลือกกิจกรรมที่ช่วยให้ร่างกายผ่อนคลาย และช่วยให้จิตใจกลับมาอยู่กับปัจจุบันมากขึ้น",
+
                 activities: [
+
                     {
-                        icon: "👀", title: "เทคนิค 5-4-3-2-1 (Grounding)", subtitle: "ดึงสติกลับมา | ใช้เวลา 5–10 นาที",
-                        tags: ["เวลา: 5–10 นาที", "อุปกรณ์: ไม่ต้องใช้"],
-                        stepsTitle: "วิธีทำ (ค่อย ๆ สังเกตโดยไม่ต้องรีบ)",
-                        steps: ["👁️ สังเกต 5 สิ่งที่มองเห็นรอบตัว", "✋ สังเกต 4 สิ่งที่ร่างกายสัมผัสได้", "👂 ฟัง 3 สิ่งที่ได้ยินในตอนนี้", "👃 รับรู้ 2 สิ่งที่ได้กลิ่น", "👅 รับรู้ 1 สิ่งที่รับรสได้"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ ช่วยลดการจดจ่อกับความคิดหรือความกังวลที่มากเกินไป", "✨ ช่วยให้กลับมาอยู่กับปัจจุบัน", "✨ ช่วยให้สามารถจัดการกับสถานการณ์ที่ทำให้รู้สึกเครียดได้ดีขึ้น"],
-                        actionText: "🎈 เริ่มเล่น Tap & Pop", actionLink: "tap-pop.html"
-                    },
-                    {
-                        icon: "🫁", title: "การหายใจด้วยกระบังลม", subtitle: "ใช้เวลา 5–10 นาที | ไม่ต้องใช้อุปกรณ์",
-                        tags: ["เวลา: 5–10 นาที", "อุปกรณ์: ไม่ต้องใช้"],
+                        icon: "🧘",
+
+                        title:
+                            "การหายใจด้วยกระบังลม (Diaphragmatic Breathing)",
+
+                        subtitle:
+                            "ใช้เวลา 5–10 นาที | ไม่ต้องใช้อุปกรณ์",
+
+                        tags: [
+                            "เวลา: ประมาณ 5–10 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
                         stepsTitle: "วิธีทำ",
-                        steps: ["นั่งหรือนอนในท่าที่สบาย", "วางมือหนึ่งข้างบนหน้าอก และอีกข้างบนหน้าท้อง", "หายใจเข้าช้า ๆ ทางจมูก ให้รู้สึกว่าหน้าท้องขยาย", "ผ่อนลมหายใจออกช้า ๆ และยาวขึ้นเล็กน้อย", "ทำต่อเนื่องประมาณ 5–10 นาที โดยไม่ต้องกลั้นหรือฝืน"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ ช่วยลดการตื่นตัวของร่างกายเมื่อมีความเครียดสูง", "✨ ช่วยให้การหายใจและร่างกายผ่อนคลาย", "✨ อาจช่วยลดอัตราการเต้นของหัวใจและความดันโลหิต"]
+
+                        steps: [
+                            "นั่งหรือนอนในท่าที่สบาย",
+                            "วางมือหนึ่งข้างบนหน้าอก และอีกข้างบนหน้าท้อง",
+                            "หายใจเข้าช้า ๆ ทางจมูก ให้รู้สึกว่าหน้าท้องค่อย ๆ ขยาย",
+                            "ผ่อนลมหายใจออกช้า ๆ และยาวขึ้นเล็กน้อย",
+                            "ทำต่อเนื่องประมาณ 5–10 นาที โดยไม่ต้องกลั้นหรือฝืนการหายใจ"
+                        ],
+
+                        benefitsTitle: "ช่วยอะไร?",
+
+                        benefits: [
+                            "🧠 การหายใจโดยใช้กระบังลมเป็นหลักช่วยให้การหายใจมีประสิทธิภาพมากขึ้น และลดการใช้กล้ามเนื้อบริเวณคอและหน้าอกมากเกินไป",
+
+                "🌿 การหายใจที่ช้าลงสามารถส่งผลต่อระบบประสาทอัตโนมัติ (Autonomic Nervous System) โดยเกี่ยวข้องกับการเพิ่ม vagal activity (การทำงานของเส้นประสาทเวกัส) ซึ่งมีบทบาทในการควบคุมการทำงานของหัวใจและการตอบสนองต่อความเครียด",
+
+                "💓 การหายใจช้าและเป็นจังหวะยังสัมพันธ์กับ HRV (Heart Rate Variability; ความแปรปรวนของอัตราการเต้นหัวใจ) ที่ดีขึ้น ซึ่งสะท้อนความสามารถของระบบประสาทอัตโนมัติในการปรับตัวต่อความเครียด",
+
+                "💜 จึงอาจช่วยให้ร่างกายลดภาวะตื่นตัวจากความเครียด และส่งเสริมการกลับเข้าสู่ภาวะผ่อนคลายมากขึ้น"
+            ],
+                        
+
+                        actionText:
+                            "🐱 เริ่มฝึกหายใจด้วยกระบังลม",
+
+                        actionLink:
+                            "diaphragmatic.html"
                     },
+
+
                     {
-                        icon: "🤖", title: "คุยกับเพื่อน AI ระบายความรู้สึก", subtitle: "พูดคุย ปรึกษาได้ตลอด 24 ชั่วโมง",
-                        tags: ["บริการ 24 ชม.", "พิมพ์ระบายความรู้สึก"],
-                        stepsTitle: "คำแนะนำ",
-                        steps: ["หากรู้สึกอึดอัด กังวล หรืออยากบ่นเรื่องต่างๆ ให้ใครสักคนฟัง", "คุณสามารถแชทพูดคุยกับ @psyjaibot ได้ทันที", "บอทพร้อมรับฟังและชวนคุยเป็นเพื่อนคุณตลอด 24 ชั่วโมงโดยไม่ต้องเกรงใจ"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ มีพื้นที่ปลอดภัยให้ระบายความรู้สึกได้ทันทีเมื่อต้องการ", "✨ ช่วยลดความอึดอัดใจจากการเก็บความเครียดไว้คนเดียว"],
-                        actionText: "💬 คุยกับเพื่อน AI (@psyjaibot)", 
-                        actionLink: "https://line.me/R/ti/p/@psyjaibot"
+                        icon: "🌿",
+
+                        title:
+                            "การฝึก Grounding 5-4-3-2-1",
+
+                        subtitle:
+                            "ใช้เวลา 5–10 นาที | ใช้ประสาทสัมผัสรอบตัว",
+
+                        tags: [
+                            "เวลา: ประมาณ 5–10 นาที",
+                            "อุปกรณ์: ไม่ต้องใช้อุปกรณ์"
+                        ],
+
+                        stepsTitle: "วิธีทำ",
+
+                        steps: [
+                            "มองหาสิ่งของ 5 สิ่งที่คุณมองเห็นรอบตัว",
+                            "สัมผัสสิ่งของ 4 สิ่งที่สามารถสัมผัสได้",
+                            "ตั้งใจฟังเสียง 3 เสียงที่ได้ยิน",
+                            "สังเกตกลิ่น 2 กลิ่นที่รับรู้ได้",
+                            "รับรู้รสชาติ 1 อย่างที่อยู่ในปากหรือจิบน้ำแล้วสังเกตความรู้สึก",
+                            "ค่อย ๆ กลับมาสังเกตลมหายใจและสิ่งที่อยู่รอบตัว"
+                        ],
+
+                        benefitsTitle: "ช่วยอะไร?",
+
+                        benefits: [
+                             "🧠 การฝึก Grounding ช่วยดึงความสนใจจากความคิดหรืออารมณ์ที่กำลังรุนแรงกลับมาสู่ข้อมูลที่รับรู้ผ่านประสาทสัมผัสในปัจจุบัน",
+
+                "👀 การมองเห็น สัมผัส ฟังเสียง รับรู้กลิ่น และรสชาติ ช่วยให้สมองประมวลผลข้อมูลจากสิ่งแวดล้อมและร่างกายที่กำลังเกิดขึ้นในขณะนั้น",
+
+                "💭 เมื่อความสนใจถูกนำกลับมาสู่สิ่งที่กำลังเกิดขึ้นจริง อาจช่วยลดการจดจ่อกับความคิดวิตกกังวลหรือความคิดที่วนซ้ำ และเพิ่มการรับรู้ร่างกายและสิ่งแวดล้อม",
+
+                "💜 จึงอาจช่วยให้จิตใจกลับมาอยู่กับปัจจุบัน และลดความรุนแรงของความวิตกกังวลหรืออาการหลุดลอย (Dissociation) ในบางสถานการณ์"
+                        ],
+
+                        actionText:
+                            "🌿 เริ่มฝึก Grounding",
+
+                        actionLink:
+                            "tap-pop.html"
                     },
+
+
                     {
-                        icon: "👩‍⚕️", title: "พูดคุยกับนักจิตวิทยา", subtitle: "เวลาให้บริการ 10.00 น. - 22.00 น.",
-                        tags: ["ปรึกษาผู้เชี่ยวชาญ", "10.00 - 22.00 น."],
-                        stepsTitle: "คำแนะนำ",
-                        steps: ["หากความเครียดเริ่มส่งผลต่อการเรียน การนอน หรือการใช้ชีวิต", "หากรู้สึกว่าจัดการด้วยตนเองได้ยาก คุณไม่จำเป็นต้องรับมือเพียงลำพัง", "สามารถกดปุ่มด้านล่างเพื่อแชทพูดคุยกับนักจิตวิทยาได้ในช่วงเวลาที่กำหนด", "นักจิตวิทยาพร้อมรับฟังและให้คำปรึกษาที่เหมาะสมกับคุณ"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ มีผู้รับฟังอย่างเข้าใจ ปลอดภัย และเก็บเป็นความลับ", "✨ ได้รับคำแนะนำและทางออกที่เหมาะสมจากผู้เชี่ยวชาญโดยตรง"],
-                        actionText: "💬 ทักแชทคุยกับนักจิตวิทยา", 
-                        actionLink: "https://here2healproject.com/online-chat/"
+                        icon: "🤖",
+
+                        title:
+                            "คุยกับเพื่อน AI ระบายความรู้สึก",
+
+                        subtitle:
+                            "พูดคุย ปรึกษาได้ตลอด 24 ชั่วโมง",
+
+                        tags: [
+                            "บริการ 24 ชม.",
+                            "พื้นที่ปลอดภัย"
+                        ],
+
+                        stepsTitle:
+                            "คำแนะนำ",
+
+                        steps: [
+                            "ในช่วงที่ดึกมาก หรือยังไม่พร้อมคุยกับใคร",
+                            "คุณสามารถแชทระบายความรู้สึกกับเพื่อน AI ได้ทันที",
+                            "บอทพร้อมรับฟังและอยู่เป็นเพื่อนคุณตลอด 24 ชั่วโมง"
+                        ],
+
+                        benefitsTitle:
+                            "ช่วยเรื่องอะไร?",
+
+                        benefits: [
+                            "🧠 การพิมพ์ความรู้สึกและความคิดที่กำลังเกิดขึ้นออกมาเป็นคำพูดเกี่ยวข้องกับกระบวนการ Affect Labeling (การระบุและติดป้ายชื่ออารมณ์) ซึ่งช่วยให้บุคคลเปลี่ยนประสบการณ์ทางอารมณ์ให้สามารถสังเกตและอธิบายออกมาเป็นภาษาได้",
+
+                "💭 กระบวนการ Affect Labeling เกี่ยวข้องกับการทำงานของ Right Ventrolateral Prefrontal Cortex (RVLPFC) ซึ่งเป็นบริเวณสมองที่เกี่ยวข้องกับการกำกับอารมณ์ และมีความสัมพันธ์กับการลดการตอบสนองของ Amygdala (อะมิกดะลา) ที่เกี่ยวข้องกับการประมวลผลอารมณ์และการตอบสนองต่อความเครียด",
+
+                "🌿 การได้ถ่ายทอดความคิดและความรู้สึกออกมาเป็นข้อความจึงอาจช่วยให้มองอารมณ์ของตนเองได้ชัดเจนขึ้น และช่วยลดความรุนแรงของอารมณ์ในช่วงเวลานั้น",
+
+                "💜 อย่างไรก็ตาม แชทบอทเป็นเพียงเครื่องมือช่วยระบายและจัดระเบียบความรู้สึก ไม่สามารถทดแทนการประเมินหรือการดูแลจากผู้เชี่ยวชาญด้านสุขภาพจิตได้"
+                        ],
+
+                        actionText:
+                            "💬 คุยกับเพื่อน AI",
+
+                        actionLink:
+                            "line-qr.png",
+
+                        actionType:
+                            "qr"
                     }
+
                 ]
+
             },
+
+
+            /* ==========================================
+               ระดับรุนแรง
+            ========================================== */
+
             severe: {
-                intro: "💡 จากผลประเมินของคุณ (เครียดรุนแรง)<br>เมื่อความเครียดอยู่ในระดับรุนแรง สิ่งสำคัญไม่ใช่การพยายามจัดการทุกอย่างด้วยตัวเอง แต่ควรหยุดพัก และติดต่อพูดคุยผ่านช่องทางด้านล่างนี้ทันทีนะคะ",
+
+                intro:
+                    "💡 จากผลประเมินของคุณ (เครียดรุนแรง)<br>เมื่อความเครียดอยู่ในระดับรุนแรง สิ่งสำคัญไม่ใช่การพยายามจัดการทุกอย่างด้วยตัวเอง แต่ควรหยุดพัก และติดต่อพูดคุยผ่านช่องทางด้านล่างนี้ทันทีนะคะ",
+
                 activities: [
+
+                   {
+    icon: "🎒",
+    title: "กระเป๋าที่หนักเกินไป",
+    subtitle: "ลองวางสิ่งที่กำลังแบกไว้ลงทีละเรื่อง",
+    tags: ["กิจกรรมสะท้อนความรู้สึก", "ใช้เวลาไม่นาน"],
+
+    stepsTitle: "ลองทำดู",
+    steps: [
+        "ลองนึกถึงสิ่งที่กำลังทำให้คุณรู้สึกหนักใจในช่วงนี้",
+        "เลือกเรื่องที่กำลังกังวลออกมา 1 เรื่อง",
+        "ลองถามตัวเองว่า เรื่องนี้เป็นสิ่งที่ฉันสามารถจัดการได้ในวันนี้หรือไม่",
+        "หากยังจัดการไม่ได้ ลองวางเรื่องนั้นไว้ก่อน และให้เวลากับตัวเองได้พัก",
+        "เลือกเพียง 1 เรื่องเล็ก ๆ ที่สามารถทำได้ในวันนี้ก็เพียงพอ"
+    ],
+
+    benefitsTitle: "กิจกรรมนี้ช่วยอะไร?",
+    benefits: [
+        "📝 การเขียนถ่ายทอดความคิดและความรู้สึก (Expressive Writing) ช่วยเปลี่ยนประสบการณ์ภายในให้ถูกจัดระเบียบออกมาเป็นภาษา ทำให้มองเห็นความคิดและอารมณ์ของตนเองได้ชัดขึ้น",
+
+                "🧠 การถ่ายทอดความรู้สึกออกมาเป็นคำเกี่ยวข้องกับกระบวนการ Emotion Regulation (การกำกับอารมณ์) และการทำงานของบริเวณสมองส่วนหน้าที่เกี่ยวข้องกับการควบคุมอารมณ์",
+
+                "🌿 งานวิจัยพบว่า Expressive Writing อาจช่วยลดอาการด้านความเครียด ความวิตกกังวล และอารมณ์ด้านลบได้ในระดับหนึ่ง โดยผลของการเขียนอาจไม่ได้เกิดขึ้นทันทีและอาจเห็นได้ชัดขึ้นเมื่อมีการฝึกอย่างต่อเนื่อง",
+
+                "💜 การเลือกวางเรื่องที่ยังไม่จำเป็นต้องจัดการทันที อาจช่วยลดความรู้สึกว่าต้องรับมือกับทุกเรื่องพร้อมกัน และเปิดพื้นที่ให้ตัวเองได้พัก"
+    ],
+
+    actionText: "🎒 เปิดกิจกรรม",
+actionLink: "bag.html"
+},
+
+
                     {
-                        icon: "🫁", title: "หายใจช้าเพื่อช่วยให้ร่างกายสงบ", subtitle: "ลดการตื่นตัว | ใช้เวลา 3–5 นาที",
-                        tags: ["เวลา: 3–5 นาที", "ไม่ต้องใช้อุปกรณ์"],
-                        stepsTitle: "วิธีทำ",
-                        steps: ["หยุดกิจกรรมที่กำลังทำและนั่งในบริเวณที่ปลอดภัย", "ผ่อนคลายไหล่และคลายความเกร็งของร่างกาย", "หายใจเข้าช้า ๆ ทางจมูก", "ผ่อนลมหายใจออกช้า ๆ โดยไม่ต้องกลั้นหายใจ", "ทำซ้ำอย่างสบาย ๆ ประมาณ 3–5 นาที", "หากรู้สึกเวียนศีรษะหรือไม่สบาย ให้หยุดและกลับมาหายใจตามปกติ"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ ช่วยลดการตื่นตัวของร่างกาย", "✨ ช่วยให้การหายใจกลับมาสม่ำเสมอขึ้น", "✨ ช่วยประคองอาการในช่วงที่รู้สึกเครียดหรือวิตกกังวลมากได้"]
+                        icon: "🤖",
+
+                        title:
+                            "คุยกับเพื่อน AI ระบายความรู้สึก",
+
+                        subtitle:
+                            "พูดคุย ปรึกษาได้ตลอด 24 ชั่วโมง",
+
+                        tags: [
+                            "บริการ 24 ชม.",
+                            "พื้นที่ปลอดภัย"
+                        ],
+
+                        stepsTitle:
+                            "คำแนะนำ",
+
+                        steps: [
+                            "ในช่วงที่ดึกมาก หรือยังไม่พร้อมคุยกับใคร",
+                            "คุณสามารถแชทระบายความรู้สึกกับเพื่อน AI ได้",
+                            "บอทพร้อมรับฟังและอยู่เป็นเพื่อนคุณตลอด 24 ชั่วโมง"
+                        ],
+
+                        benefitsTitle:
+                            "ช่วยเรื่องอะไร?",
+
+                        benefits: [
+                                  "🧠 การพูดหรือพิมพ์ความรู้สึกออกมาเป็นคำเกี่ยวข้องกับกระบวนการ Affect Labeling (การระบุและติดป้ายชื่ออารมณ์) ซึ่งช่วยให้ประสบการณ์ทางอารมณ์สามารถถูกสังเกตและอธิบายออกมาเป็นภาษาได้",
+
+                "💭 งานวิจัยด้านประสาทวิทยาพบว่า Affect Labeling เกี่ยวข้องกับการทำงานของ Right Ventrolateral Prefrontal Cortex (RVLPFC) และมีความสัมพันธ์กับการลดการตอบสนองของ Amygdala ซึ่งเกี่ยวข้องกับการประมวลผลอารมณ์",
+
+                "🌿 การเปลี่ยนความรู้สึกที่กำลังเกิดขึ้นให้เป็นคำพูดอาจช่วยให้บุคคลมองเห็นและจัดระเบียบประสบการณ์ทางอารมณ์ได้ชัดเจนขึ้น",
+
+                "💜 แชทบอทเหมาะสำหรับใช้เป็นเครื่องมือช่วยระบายและจัดระเบียบความคิดเบื้องต้น แต่ไม่สามารถทดแทนการประเมินหรือการดูแลจากผู้เชี่ยวชาญด้านสุขภาพจิตได้"
+            ],
+
+                        actionText:
+                            "💬 คุยกับเพื่อน AI",
+
+                        actionLink:
+                            "line-qr.png",
+
+                        actionType:
+                            "qr"
                     },
+
+
                     {
-                        icon: "🤖", title: "คุยกับเพื่อน AI ระบายความรู้สึก", subtitle: "พูดคุย ปรึกษาได้ตลอด 24 ชั่วโมง",
-                        tags: ["บริการ 24 ชม.", "พื้นที่ปลอดภัย"],
-                        stepsTitle: "คำแนะนำ",
-                        steps: ["ในช่วงที่ดึกมาก หรือยังไม่พร้อมคุยกับใคร", "คุณสามารถแชทระบายความรู้สึกที่หนักอึ้งกับ @psyjaibot ได้ทันที", "บอทพร้อมรับฟังและอยู่เป็นเพื่อนคุณตลอด 24 ชั่วโมง"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ ช่วยให้คุณไม่ต้องเผชิญกับความรู้สึกแย่ๆ เพียงลำพัง", "✨ เป็นพื้นที่รับฟังที่ไม่มีการตัดสินคุณ"],
-                        actionText: "💬 คุยกับเพื่อน AI (@psyjaibot)", 
-                        actionLink: "https://line.me/R/ti/p/@psyjaibot"
+                        icon: "👩‍⚕️",
+
+                        title:
+                            "พูดคุยกับนักจิตวิทยา",
+
+                        subtitle:
+                            "เวลาให้บริการ 10.00 น. - 22.00 น.",
+
+                        tags: [
+                            "ด่วน",
+                            "ปรึกษาผู้เชี่ยวชาญ"
+                        ],
+
+                        stepsTitle:
+                            "คำแนะนำ",
+
+                        steps: [
+                            "เมื่อความเครียดอยู่ในระดับที่รุนแรง การขอความช่วยเหลือคือสิ่งที่ควรทำ",
+                            "สามารถทักแชทเพื่อพูดคุยและรับการประเมินจากนักจิตวิทยาได้โดยตรง",
+                            "นักจิตวิทยาจะช่วยหาแนวทางรับมือและดูแลจิตใจคุณในจังหวะนี้"
+                        ],
+
+                        benefitsTitle:
+                            "ช่วยเรื่องอะไร?",
+
+                        benefits: [
+                            "🧠 Psychotherapy (จิตบำบัด) ช่วยให้ผู้รับบริการสำรวจความคิด อารมณ์ และพฤติกรรมที่เกี่ยวข้องกับความเครียด โดยมีกระบวนการที่มุ่งพัฒนาการกำกับอารมณ์",
+
+                "🌿 กระบวนการกำกับอารมณ์เกี่ยวข้องกับการทำงานของ Prefrontal Cortex (เปลือกสมองส่วนหน้า) ซึ่งมีบทบาทในการควบคุมและประเมินอารมณ์ รวมถึงการปรับการตอบสนองต่อสิ่งกระตุ้นทางอารมณ์",
+
+                "💭 งานวิจัยด้านประสาทวิทยาพบว่าการกำกับอารมณ์เกี่ยวข้องกับการทำงานร่วมกันระหว่างบริเวณสมองส่วนหน้าที่เกี่ยวข้องกับการควบคุมอารมณ์และ Amygdala ซึ่งเกี่ยวข้องกับการประมวลผลอารมณ์",
+
+                "💜 การได้พูดคุยกับผู้เชี่ยวชาญในพื้นที่ที่ปลอดภัยจึงสามารถเป็นส่วนหนึ่งของการช่วยให้บุคคลเข้าใจอารมณ์และพัฒนาวิธีรับมือกับความเครียดได้เหมาะสมขึ้น"
+            ],
+                        
+
+                        actionText:
+                            "💬 ทักแชทคุยกับนักจิตวิทยา",
+
+                        actionLink:
+                            "https://here2healproject.com/online-chat/"
                     },
+
+
                     {
-                        icon: "👩‍⚕️", title: "พูดคุยกับนักจิตวิทยา", subtitle: "เวลาให้บริการ 10.00 น. - 22.00 น.",
-                        tags: ["ด่วน", "ปรึกษาผู้เชี่ยวชาญ"],
-                        stepsTitle: "คำแนะนำ",
-                        steps: ["เมื่อความเครียดอยู่ในระดับที่รุนแรง การขอความช่วยเหลือคือสิ่งที่ควรทำที่สุด", "สามารถทักแชทเพื่อพูดคุยและรับการประเมินจากนักจิตวิทยาได้โดยตรง", "นักจิตวิทยาจะช่วยหาแนวทางรับมือและดูแลจิตใจคุณในจังหวะนี้"],
-                        benefitsTitle: "ช่วยเรื่องอะไร?",
-                        benefits: ["✨ ได้รับการประเมินและดูแลจากผู้เชี่ยวชาญทันที", "✨ ช่วยพิจารณาแนวทางดูแลที่ปลอดภัยและเหมาะสมกับสถานการณ์ของคุณ"],
-                        actionText: "💬 ทักแชทคุยกับนักจิตวิทยา", 
-                        actionLink: "https://here2healproject.com/online-chat/"
-                    },
-                    {
-                        icon: "🛡️", title: "เช็กความปลอดภัยของตัวเอง", subtitle: "โปรดขอความช่วยเหลือทันที",
-                        tags: ["ด่วน", "ความปลอดภัย"],
-                        stepsTitle: "คำแนะนำเบื้องต้น",
-                        steps: ["หากมีความคิดทำร้ายตัวเองหรือผู้อื่น รู้สึกไม่ปลอดภัย หรือควบคุมตัวเองไม่ได้", "อย่าอยู่คนเดียว ติดต่อคนที่ไว้ใจและขอให้มาอยู่ด้วย", "ขอความช่วยเหลือจากบริการฉุกเฉิน หรือโทร 1323 สายด่วนสุขภาพจิต", "ไม่ควรพยายามจัดการสถานการณ์เพียงลำพัง"],
-                        benefitsTitle: "จำไว้ว่า:",
-                        benefits: ["✨ การขอความช่วยเหลือไม่ใช่ความล้มเหลว", "✨ คุณไม่จำเป็นต้องผ่านช่วงเวลานี้เพียงคนเดียว"]
-                    }
+    icon: "🛡️",
+
+    title:
+        "เช็กความปลอดภัยของตัวเอง",
+
+    subtitle:
+        "สำรวจความรู้สึกและสุขภาพจิตของตัวเองเพิ่มเติม",
+
+    tags: [
+        "ด่วน",
+        "ความปลอดภัย"
+    ],
+
+    stepsTitle:
+        "คำแนะนำเบื้องต้น",
+
+    steps: [
+        "หากมีความคิดทำร้ายตัวเองหรือผู้อื่น รู้สึกไม่ปลอดภัย หรือควบคุมตัวเองไม่ได้ อย่าอยู่คนเดียว",
+        "ติดต่อคนที่ไว้ใจและขอให้มาอยู่ด้วย",
+        "สามารถทำแบบประเมินสุขภาพจิตเบื้องต้นเพื่อสำรวจความรู้สึกของตัวเองเพิ่มเติม",
+        "หากรู้สึกไม่ปลอดภัยหรือมีความเสี่ยงเร่งด่วน ควรขอความช่วยเหลือจากผู้เชี่ยวชาญหรือบริการฉุกเฉินทันที"
+    ],
+
+    benefitsTitle:
+        "จำไว้ว่า:",
+
+    benefits: [
+        "🧠 การหยุดประเมินสถานการณ์อย่างเป็นขั้นตอนช่วยให้บุคคลรับรู้ข้อมูลเกี่ยวกับความปลอดภัยของตนเองได้ชัดเจนขึ้น แทนที่จะปล่อยให้ความรู้สึกกลัวหรือความเครียดดำเนินต่อไปโดยไม่ได้ตรวจสอบ",
+
+                "🌿 เมื่อรับรู้ว่าสถานการณ์ปลอดภัย การตอบสนองต่อภัยคุกคามของร่างกายอาจลดลง ทำให้สามารถกลับมาให้ความสนใจกับการหายใจ สิ่งแวดล้อม และการขอความช่วยเหลือได้มากขึ้น",
+
+                "💜 Safety Check ไม่ได้ใช้เพื่อวินิจฉัยภาวะทางจิต แต่เป็นขั้นตอนเบื้องต้นเพื่อช่วยตัดสินใจว่าควรอยู่กับตัวเอง ติดต่อคนที่ไว้ใจ หรือขอความช่วยเหลือจากผู้เชี่ยวชาญ",
+
+                "🫂 หากรู้สึกไม่ปลอดภัยหรือมีความคิดทำร้ายตนเอง ควรขอความช่วยเหลือจากคนใกล้ตัว ผู้เชี่ยวชาญ หรือสายด่วนสุขภาพจิต 1323 ซึ่งให้บริการตลอด 24 ชั่วโมง"
+    ],
+
+        actionText:
+        "🛡️ ทำแบบประเมินสุขภาพจิต",
+
+    actionLink:
+        "https://www.prescreening.dmind.app/?openExternalBrowser=1&utm_medium=website-dmind&utm_source=aimet&add-on-splash-screen=1"
+}
+
                 ]
+
             }
+
         };
+
+        /* ==========================================
+           ตัวแปรกิจกรรมปัจจุบัน
+        ========================================== */
 
         let currentActivities = [];
 
-        window.onload = function() {
-            const score = localStorage.getItem("stressScore");
-            const recommendBox = document.getElementById("recommendation");
-            const cardsContainer = document.getElementById("cardsContainer");
-            
+
+        /* ==========================================
+           โหลดข้อมูลตามคะแนน
+        ========================================== */
+
+        window.onload = function () {
+
+            const score =
+                localStorage.getItem("stressScore");
+
+            const recommendBox =
+                document.getElementById("recommendation");
+
+            const cardsContainer =
+                document.getElementById("cardsContainer");
+
+
             let level = "low";
+
+
             if (score !== null) {
-                const totalScore = parseInt(score);
-                if (totalScore <= 23) level = "low";
-                else if (totalScore <= 41) level = "medium";
-                else if (totalScore <= 61) level = "high";
-                else level = "severe"; 
+
+                const totalScore =
+                    parseInt(score);
+
+
+                if (totalScore <= 23) {
+
+                    level = "low";
+
+                } else if (totalScore <= 41) {
+
+                    level = "medium";
+
+                } else if (totalScore <= 61) {
+
+                    level = "high";
+
+                } else {
+
+                    level = "severe";
+
+                }
+
             }
 
-            const data = activityDB[level];
-            recommendBox.innerHTML = data.intro;
-            currentActivities = data.activities;
 
-            cardsContainer.innerHTML = currentActivities.map((act, index) => `
-                <div class="card" onclick="openModal(${index})">
-                    <div class="icon">${act.icon}</div>
-                    <div class="card-text">
-                        <h3>${act.title}</h3>
-                        <p>${act.subtitle}</p>
+            const data =
+                activityDB[level];
+
+
+            recommendBox.innerHTML =
+                data.intro;
+
+
+            currentActivities =
+                data.activities;
+
+
+            cardsContainer.innerHTML =
+                currentActivities.map(
+                    (act, index) => `
+
+                    <div
+                        class="card"
+                        onclick="openModal(${index})"
+                    >
+
+                        <div class="icon">
+                            ${act.icon}
+                        </div>
+
+                        <div class="card-text">
+
+                            <h3>
+                                ${act.title}
+                            </h3>
+
+                            <p>
+                                ${act.subtitle}
+                            </p>
+
+                        </div>
+
                     </div>
-                </div>
-            `).join("");
+
+                `
+                ).join("");
+
         };
 
-        const overlay = document.getElementById("modalOverlay");
-        const modalBody = document.getElementById("modalBody");
+
+        /* ==========================================
+           Modal
+        ========================================== */
+
+        const overlay =
+            document.getElementById("modalOverlay");
+
+        const modalBody =
+            document.getElementById("modalBody");
+
 
         function openModal(index) {
-            const data = currentActivities[index];
-            let tagsHtml = data.tags.map(t => `<span class="tag">${t}</span>`).join('');
-            let stepsHtml = data.steps.map(s => `<li>${s}</li>`).join('');
-            let benefitsHtml = data.benefits.map(b => `<li>${b}</li>`).join('');
-            
-            let btnHtml = '';
-            if(data.actionLink) {
-                const isExternal = data.actionLink.startsWith('http');
-                const targetAttr = isExternal ? 'target="_blank"' : '';
-                btnHtml = `<a href="${data.actionLink}" class="action-btn" ${targetAttr}>${data.actionText}</a>`;
+
+            const data =
+                currentActivities[index];
+
+
+            let tagsHtml =
+                data.tags
+                    .map(
+                        t =>
+                            `<span class="tag">${t}</span>`
+                    )
+                    .join("");
+
+
+            let stepsHtml =
+                data.steps
+                    .map(
+                        s =>
+                            `<li>${s}</li>`
+                    )
+                    .join("");
+
+
+            let benefitsHtml =
+                data.benefits
+                    .map(
+                        b =>
+                            `<li>${b}</li>`
+                    )
+                    .join("");
+
+
+            /* ==========================================
+               สร้างปุ่ม
+            ========================================== */
+
+            let btnHtml = "";
+
+
+            if (data.actionLink) {
+
+
+                /* ถ้าเป็น QR Code */
+
+                if (data.actionType === "qr") {
+
+                    btnHtml = `
+
+                        <button
+                            class="action-btn"
+                            type="button"
+                            onclick="openQR()"
+                        >
+
+                            ${data.actionText}
+
+                        </button>
+
+                    `;
+
+
+                } else {
+
+
+                    /* ถ้าเป็นลิงก์ทั่วไป */
+
+                    const isExternal =
+                        data.actionLink.startsWith("http");
+
+
+                    const targetAttr =
+                        isExternal
+                            ? 'target="_blank"'
+                            : "";
+
+
+                    btnHtml = `
+
+                        <a
+                            href="${data.actionLink}"
+                            class="action-btn"
+                            ${targetAttr}
+                        >
+
+                            ${data.actionText}
+
+                        </a>
+
+                    `;
+
+                }
+
             }
 
+
             modalBody.innerHTML = `
+
                 <div class="modal-header">
-                    <h2>${data.title}</h2>
+
+                    <h2>
+                        ${data.title}
+                    </h2>
+
                 </div>
-                <div class="tag-row">${tagsHtml}</div>
+
+
+                <div class="tag-row">
+
+                    ${tagsHtml}
+
+                </div>
+
+
                 <div class="modal-section">
-                    <h4>${data.stepsTitle}</h4>
-                    <ol>${stepsHtml}</ol>
+
+                    <h4>
+                        ${data.stepsTitle}
+                    </h4>
+
+                    <ol>
+
+                        ${stepsHtml}
+
+                    </ol>
+
                 </div>
+
+
                 <div class="modal-section">
-                    <h4>${data.benefitsTitle}</h4>
-                    <ul style="list-style-type: none; padding-left: 0;">${benefitsHtml}</ul>
+
+                    <h4>
+                        ${data.benefitsTitle}
+                    </h4>
+
+                    <ul
+                        style="
+                            list-style-type: none;
+                            padding-left: 0;
+                        "
+                    >
+
+                        ${benefitsHtml}
+
+                    </ul>
+
                 </div>
+
+
                 ${btnHtml}
+
             `;
-            
+
+
             overlay.classList.add("active");
-            document.body.style.overflow = "hidden";
+
+            document.body.style.overflow =
+                "hidden";
+
         }
 
-function closeModal(event) {
-    if (event && event.target !== overlay) return;
 
-    overlay.classList.remove("active");
-    document.body.style.overflow = "auto";
-}            
-        
+        /* ==========================================
+           ปิด Modal
+        ========================================== */
+
+        function closeModal(event) {
+
+            if (
+                event &&
+                event.target !== overlay
+            ) {
+
+                return;
+
+            }
+
+
+            overlay.classList.remove("active");
+
+            document.body.style.overflow =
+                "auto";
+
+        }
+
+
+        /* ==========================================
+           เปิด QR Popup
+        ========================================== */
+
+        function openQR() {
+
+            const qrPopup =
+                document.getElementById("qrPopup");
+
+
+            qrPopup.classList.add("active");
+
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        /* ==========================================
+           ปิด QR Popup
+        ========================================== */
+
+        function closeQR(event) {
+
+            const qrPopup =
+                document.getElementById("qrPopup");
+
+
+            if (
+                event &&
+                event.target !== qrPopup
+            ) {
+
+                return;
+
+            }
+
+
+            qrPopup.classList.remove("active");
+
+
+            document.body.style.overflow =
+                "auto";
+
+        }
+
+
+        /* ==========================================
+           กด ESC เพื่อปิด
+        ========================================== */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    document
+                        .getElementById("qrPopup")
+                        .classList.remove("active");
+
+
+                    document
+                        .getElementById("modalOverlay")
+                        .classList.remove("active");
+
+
+                    document.body.style.overflow =
+                        "auto";
+
+                }
+
+            }
+        );
+
     </script>
+
+
+</div>
+
 </body>
 </html>

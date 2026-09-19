@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>พูดกับตัวเองอย่างใจดี</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+    color: #4c1d95;
+    padding: 30px 20px;
+}
+
+.container {
+    max-width: 550px;
+    margin: auto;
+}
+
+.card {
+    background: rgba(255,255,255,0.96);
+    border-radius: 30px;
+    padding: 28px 22px;
+    box-shadow: 0 12px 35px rgba(168,85,247,0.16);
+}
+
+h1 {
+    text-align: center;
+    color: #6b21a8;
+    font-size: 27px;
+    margin: 0 0 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #7e22ce;
+    line-height: 1.7;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+/* กล่องคำพูด */
+.quote-box {
+    background: linear-gradient(135deg, #faf5ff, #fdf2f8);
+    border: 1px solid #eadcff;
+    border-radius: 24px;
+    padding: 22px 18px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.quote {
+    font-size: 19px;
+    font-weight: bold;
+    color: #581c87;
+    line-height: 1.7;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.random-button {
+    border: none;
+    background: #f3e8ff;
+    color: #7e22ce;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.random-button:hover {
+    background: #e9d5ff;
+}
+
+/* ปุ่มอัดเสียง */
+.record-box {
+    text-align: center;
+    background: #fff7fb;
+    border-radius: 24px;
+    padding: 22px 18px;
+    margin-top: 18px;
+}
+
+.record-status {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.record-button {
+    border: none;
+    background: linear-gradient(135deg, #c084fc, #ec4899);
+    color: white;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(236,72,153,0.2);
+}
+
+.record-button:hover {
+    transform: scale(1.05);
+}
+
+.record-button.recording {
+    background: #ec4899;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.stop-button {
+    display: none;
+    border: none;
+    background: #e9d5ff;
+    color: #6b21a8;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 15px auto 0;
+}
+
+.audio-box {
+    display: none;
+    margin-top: 20px;
+    background: #faf5ff;
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.audio-box p {
+    margin-top: 0;
+    color: #6b21a8;
+    font-weight: bold;
+}
+
+audio {
+    width: 100%;
+}
+
+.tip {
+    background: #fdf2f8;
+    border-radius: 20px;
+    padding: 15px;
+    margin-top: 20px;
+    color: #831843;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.back-button {
+    display: block;
+    text-align: center;
+    margin-top: 23px;
+    color: #7e22ce;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+    <h1>💬 พูดกับตัวเองอย่างใจดี</h1>
+
+    <p class="subtitle">
+        ลองเลือกคำพูดดี ๆ ที่อยากบอกตัวเอง<br>
+        แล้วอัดเสียงของตัวเองเก็บไว้ฟัง 💜
+    </p>
+
+
+    <!-- ประโยคให้กำลังใจ -->
+
+    <div class="quote-box">
+
+        <div id="quote" class="quote">
+            💜 ฉันกำลังพยายามอย่างเต็มที่แล้ว
+        </div>
+
+        <button
+            class="random-button"
+            onclick="randomQuote()"
+        >
+            🎲 สุ่มข้อความให้กำลังใจ
+        </button>
+
+    </div>
+
+
+    <!-- ระบบอัดเสียง -->
+
+    <div class="record-box">
+
+        <div id="status" class="record-status">
+            พร้อมอัดเสียงของเธอแล้ว 🎙️
+        </div>
+
+        <button
+            id="recordButton"
+            class="record-button"
+            onclick="startRecording()"
+        >
+            🎙️
+        </button>
+
+        <button
+            id="stopButton"
+            class="stop-button"
+            onclick="stopRecording()"
+        >
+            ⏹️ หยุดอัดเสียง
+        </button>
+
+
+        <!-- เสียงที่อัด -->
+
+        <div id="audioBox" class="audio-box">
+
+            <p>🎧 เสียงของฉัน</p>
+
+            <audio id="audioPlayer" controls></audio>
+
+        </div>
+
+    </div>
+
+
+    <div class="tip">
+
+        🌷 ลองพูดประโยคนี้ออกมาเหมือนกำลังพูดกับเพื่อนคนหนึ่ง
+        ที่กำลังเหนื่อยหรือกำลังเจอเรื่องยาก ๆ
+        ไม่ต้องพูดให้สมบูรณ์แบบ แค่พูดด้วยความใจดีกับตัวเองก็พอ 💜
+
+    </div>
+
+
+    <a href="advice.html" class="back-button">
+        ← กลับไปหน้ากิจกรรม
+    </a>
+
+</div>
+
+</div>
+
+
+<script>
+
+const quotes = [
+    "💜 ฉันกำลังพยายามอย่างเต็มที่แล้ว",
+    "🌷 ฉันไม่จำเป็นต้องทำทุกอย่างให้สมบูรณ์แบบ",
+    "🌱 ฉันค่อย ๆ จัดการทีละเรื่องได้",
+    "✨ ฉันสามารถพักได้โดยไม่รู้สึกผิด",
+    "🫶 วันนี้ฉันทำดีที่สุดเท่าที่ทำได้แล้ว",
+    "💗 ฉันอนุญาตให้ตัวเองรู้สึกเหนื่อยได้",
+    "🌈 ฉันไม่จำเป็นต้องเก่งตลอดเวลา",
+    "🐱 ฉันกำลังเรียนรู้และเติบโตไปทีละก้าว"
+];
+
+let mediaRecorder = null;
+let audioChunks = [];
+let audioStream = null;
+let audioUrl = null;
+
+
+/* =========================
+   สุ่มข้อความ
+========================= */
+
+function randomQuote() {
+
+    const randomIndex =
+        Math.floor(Math.random() * quotes.length);
+
+    document.getElementById("quote").textContent =
+        quotes[randomIndex];
+}
+
+
+/* =========================
+   เริ่มอัดเสียง
+========================= */
+
+async function startRecording() {
+
+    try {
+
+        // ตรวจสอบว่าเบราว์เซอร์รองรับไมโครโฟนหรือไม่
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            document.getElementById("status").textContent =
+                "⚠️ เบราว์เซอร์นี้ไม่รองรับการใช้ไมโครโฟน";
+
+            return;
+        }
+
+
+        // ขออนุญาตใช้ไมโครโฟน
+        audioStream =
+            await navigator.mediaDevices.getUserMedia({
+                audio: true
+            });
+
+
+        audioChunks = [];
+
+
+        // เลือกชนิดไฟล์ที่เบราว์เซอร์รองรับ
+        let mimeType = "";
+
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+
+            mimeType = "audio/webm;codecs=opus";
+
+        } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+
+            mimeType = "audio/webm";
+
+        } else if (MediaRecorder.isTypeSupported("audio/ogg;codecs=opus")) {
+
+            mimeType = "audio/ogg;codecs=opus";
+
+        }
+
+
+        // สร้างตัวอัดเสียง
+        if (mimeType) {
+
+            mediaRecorder =
+                new MediaRecorder(
+                    audioStream,
+                    { mimeType: mimeType }
+                );
+
+        } else {
+
+            mediaRecorder =
+                new MediaRecorder(audioStream);
+
+        }
+
+
+        /* เก็บข้อมูลเสียง */
+
+        mediaRecorder.ondataavailable = function(event) {
+
+            if (event.data && event.data.size > 0) {
+
+                audioChunks.push(event.data);
+
+            }
+
+        };
+
+
+        /* เมื่อหยุดอัด */
+
+        mediaRecorder.onstop = function() {
+
+            if (audioChunks.length === 0) {
+
+                document.getElementById("status").textContent =
+                    "⚠️ ไม่พบข้อมูลเสียง กรุณาลองอัดใหม่";
+
+                return;
+            }
+
+
+            // ใช้ชนิดไฟล์จริงจาก recorder
+            const recordedType =
+                mediaRecorder.mimeType || "audio/webm";
+
+
+            const audioBlob =
+                new Blob(
+                    audioChunks,
+                    { type: recordedType }
+                );
+
+
+            // ลบ URL เดิมก่อน
+            if (audioUrl) {
+
+                URL.revokeObjectURL(audioUrl);
+
+            }
+
+
+            audioUrl =
+                URL.createObjectURL(audioBlob);
+
+
+            const audioPlayer =
+                document.getElementById("audioPlayer");
+
+
+            audioPlayer.src = audioUrl;
+
+            audioPlayer.load();
+
+
+            document.getElementById("audioBox")
+                .style.display = "block";
+
+
+            document.getElementById("status").textContent =
+                "💜 อัดเสียงเรียบร้อยแล้ว ลองกด ▶️ ฟังเสียงตัวเองดูนะ";
+
+
+            // ปิดไมโครโฟน
+            if (audioStream) {
+
+                audioStream.getTracks()
+                    .forEach(track => track.stop());
+
+                audioStream = null;
+
+            }
+
+        };
+
+
+        /* กรณีเกิดข้อผิดพลาด */
+
+        mediaRecorder.onerror = function(event) {
+
+            console.error("MediaRecorder error:", event);
+
+            document.getElementById("status").textContent =
+                "⚠️ เกิดข้อผิดพลาดในการอัดเสียง กรุณาลองใหม่";
+
+        };
+
+
+        // เริ่มอัด
+        mediaRecorder.start();
+
+
+        document.getElementById("status").textContent =
+            "🔴 กำลังอัดเสียง... พูดกับตัวเองได้เลย";
+
+
+        document.getElementById("recordButton")
+            .style.display = "none";
+
+
+        document.getElementById("recordButton")
+            .classList.add("recording");
+
+
+        document.getElementById("stopButton")
+            .style.display = "block";
+
+    }
+
+    catch (error) {
+
+        console.error("Microphone error:", error);
+
+
+        document.getElementById("status").textContent =
+            "⚠️ ไม่สามารถใช้ไมโครโฟนได้ กรุณาอนุญาตการเข้าถึงไมโครโฟน";
+
+    }
+
+}
+
+
+/* =========================
+   หยุดอัดเสียง
+========================= */
+
+function stopRecording() {
+
+    if (!mediaRecorder) {
+        return;
+    }
+
+
+    if (mediaRecorder.state !== "inactive") {
+
+        mediaRecorder.stop();
+
+    }
+
+
+    document.getElementById("recordButton")
+        .style.display = "inline-block";
+
+
+    document.getElementById("recordButton")
+        .classList.remove("recording");
+
+
+    document.getElementById("stopButton")
+        .style.display = "none";
+
+}
+
+</script>
+
+</body>
+</html>

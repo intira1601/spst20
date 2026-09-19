@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>เช็กก้อนแบตเตอรี่ใจ</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 15px;
+            color: #4a3b55;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 28px;
+            padding: 30px 22px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(120, 80, 150, 0.15);
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            margin: 5px 0 10px;
+            color: #8b5cf6;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           BATTERY
+        ========================= */
+
+        .battery-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 10px;
+        }
+
+        .battery {
+            width: 190px;
+            height: 90px;
+            border: 5px solid #6d5a7d;
+            border-radius: 18px;
+            padding: 6px;
+            position: relative;
+            background: #ffffff;
+        }
+
+        .battery::after {
+            content: "";
+            position: absolute;
+            right: -16px;
+            top: 25px;
+            width: 12px;
+            height: 35px;
+            background: #6d5a7d;
+            border-radius: 0 7px 7px 0;
+        }
+
+        .battery-level {
+            height: 100%;
+            width: 50%;
+            border-radius: 9px;
+            background: #a855f7;
+            transition: width 0.5s ease, background 0.3s ease;
+        }
+
+        .percentage {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #7c3aed;
+        }
+
+        /* =========================
+           QUESTION
+        ========================= */
+
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 15px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           LEVEL BUTTONS
+        ========================= */
+
+        .levels {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .level-btn {
+            border: none;
+            border-radius: 15px;
+            padding: 12px 5px;
+            background: #f3e8ff;
+            color: #6b4c7a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .level-btn:hover {
+            transform: translateY(-3px);
+            background: #e9d5ff;
+        }
+
+        .level-btn.selected {
+            background: #a855f7;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* =========================
+           MISSION
+        ========================= */
+
+        .mission-box {
+            display: none;
+            margin-top: 25px;
+            padding: 22px 18px;
+            border-radius: 22px;
+            background: #faf5ff;
+            line-height: 1.8;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .mission-box.show {
+            display: block;
+        }
+
+        .mission-title {
+            font-size: 21px;
+            font-weight: bold;
+            color: #8b5cf6;
+            margin-bottom: 12px;
+        }
+
+        .mission-text {
+            font-size: 15px;
+        }
+
+        .mission {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 17px;
+            background: #fce7f3;
+            font-weight: bold;
+            line-height: 1.8;
+        }
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-button {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           ANIMATION
+        ========================= */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 400px) {
+
+            .levels {
+                gap: 5px;
+            }
+
+            .level-btn {
+                font-size: 12px;
+                padding: 10px 3px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- หัวข้อ -->
+        <div class="icon">🔋</div>
+
+        <h1>เช็กก้อนแบตเตอรี่ใจ</h1>
+
+        <div class="subtitle">
+            ลองเช็กดูว่า ตอนนี้แบตเตอรี่ใจของเธอเหลือประมาณเท่าไหร่ 💜<br>
+            ไม่มีคำตอบที่ถูกหรือผิดนะ
+        </div>
+
+
+        <!-- แบตเตอรี่ -->
+        <div class="battery-wrapper">
+
+            <div class="battery">
+                <div
+                    class="battery-level"
+                    id="batteryLevel">
+                </div>
+            </div>
+
+        </div>
+
+        <div
+            class="percentage"
+            id="percentage">
+            50%
+        </div>
+
+
+        <!-- คำถาม -->
+        <div class="question">
+            💭 ตอนนี้เธอรู้สึกว่าแบตเตอรี่ใจอยู่ที่ระดับไหน?
+        </div>
+
+
+        <!-- ปุ่มเลือกระดับ -->
+        <div class="levels">
+
+            <button
+                class="level-btn"
+                onclick="selectBattery(0)">
+                0%
+            </button>
+
+            <button
+                class="level-btn"
+                onclick="selectBattery(20)">
+                20%
+            </button>
+
+            <button
+                class="level-btn"
+                onclick="selectBattery(50)">
+                50%
+            </button>
+
+            <button
+                class="level-btn"
+                onclick="selectBattery(80)">
+                80%
+            </button>
+
+            <button
+                class="level-btn"
+                onclick="selectBattery(100)">
+                100%
+            </button>
+
+        </div>
+
+
+        <!-- กล่องภารกิจ -->
+        <div
+            class="mission-box"
+            id="missionBox">
+
+            <div
+                class="mission-title"
+                id="missionTitle">
+            </div>
+
+            <div
+                class="mission-text"
+                id="missionText">
+            </div>
+
+            <div
+                class="mission"
+                id="mission">
+            </div>
+
+        </div>
+
+
+        <!-- กลับหน้ากิจกรรม -->
+        <a
+            href="advice.html"
+            class="back-button">
+
+            ← กลับไปหน้ากิจกรรม
+
+        </a>
+
+    </div>
+
+
+    <script>
+
+        function selectBattery(level) {
+
+            const battery =
+                document.getElementById("batteryLevel");
+
+            const percentage =
+                document.getElementById("percentage");
+
+            const missionBox =
+                document.getElementById("missionBox");
+
+            const missionTitle =
+                document.getElementById("missionTitle");
+
+            const missionText =
+                document.getElementById("missionText");
+
+            const mission =
+                document.getElementById("mission");
+
+            const buttons =
+                document.querySelectorAll(".level-btn");
+
+
+            /* -------------------------
+               ปุ่มที่ถูกเลือก
+            ------------------------- */
+
+            buttons.forEach(button => {
+
+                button.classList.remove("selected");
+
+                if (
+                    button.textContent.trim()
+                    === level + "%"
+                ) {
+                    button.classList.add("selected");
+                }
+
+            });
+
+
+            /* -------------------------
+               เปลี่ยนแบตเตอรี่
+            ------------------------- */
+
+            battery.style.width = level + "%";
+
+            percentage.textContent = level + "%";
+
+
+            /* -------------------------
+               แสดงภารกิจ
+            ------------------------- */
+
+            missionBox.classList.add("show");
+
+
+            /* =========================
+               0%
+            ========================= */
+
+            if (level === 0) {
+
+                battery.style.background = "#ef4444";
+
+                missionTitle.textContent =
+                    "🪫 วันนี้ไม่ต้องเก่งก็ได้";
+
+                missionText.innerHTML =
+                    "ตอนนี้ไม่ต้องพยายามทำอะไรเยอะก็ได้นะ 💜";
+
+                mission.innerHTML =
+                    "🌷 ภารกิจเดียวของเธอตอนนี้<br><br>" +
+                    "ดื่มน้ำ 1 จิบ แล้ววางมือถือ<br>" +
+                    "พักสายตา 30 วินาที<br><br>" +
+                    "แค่นี้ก็ถือว่าเธอดูแลตัวเองแล้วนะ";
+
+            }
+
+
+            /* =========================
+               20%
+            ========================= */
+
+            else if (level === 20) {
+
+                battery.style.background = "#ef4444";
+
+                missionTitle.textContent =
+                    "🪫 ขอพักก่อนนะ";
+
+                missionText.innerHTML =
+                    "ตอนนี้ขอให้ตัวเองหยุดพักสักนิด 🌱";
+
+                mission.innerHTML =
+                    "🌱 ภารกิจ 1 นาที<br><br>" +
+                    "หยุดพักจากสิ่งที่กำลังทำ<br>" +
+                    "แล้วหายใจช้า ๆ 3 รอบ<br><br>" +
+                    "ไม่ต้องรีบ ไม่ต้องฝืนตัวเองนะ";
+
+            }
+
+
+            /* =========================
+               50%
+            ========================= */
+
+            else if (level === 50) {
+
+                battery.style.background = "#f59e0b";
+
+                missionTitle.textContent =
+                    "🔋 เติมพลังอีกนิด";
+
+                missionText.innerHTML =
+                    "ลองหยุดเช็กใจตัวเองสักครู่นะ 💭";
+
+                mission.innerHTML =
+                    "💭 ภารกิจเช็กใจ<br><br>" +
+                    "ลองเติมคำในประโยคนี้ 1 คำ<br><br>" +
+
+                    "<strong>“ตอนนี้ฉันรู้สึก ______”</strong><br><br>" +
+
+                    "แล้วถามตัวเองว่า<br>" +
+
+                    "<strong>“ตอนนี้ฉันต้องการอะไร 1 อย่าง?”</strong>";
+
+            }
+
+
+            /* =========================
+               80%
+            ========================= */
+
+            else if (level === 80) {
+
+                battery.style.background = "#a855f7";
+
+                missionTitle.textContent =
+                    "✨ มีพลังแล้ว เติมอีกนิด";
+
+                missionText.innerHTML =
+                    "เลือกทำสิ่งเล็ก ๆ ที่ทำให้ตัวเองรู้สึกดีขึ้น";
+
+                mission.innerHTML =
+                    "✨ ภารกิจเติมพลัง 3 นาที<br><br>" +
+
+                    "เลือกทำ 1 อย่างที่ทำให้ตัวเองรู้สึกดีขึ้นเล็กน้อย<br><br>" +
+
+                    "🎵 ฟังเพลงที่ชอบ 1 เพลง<br>" +
+                    "🧃 ดื่มน้ำ<br>" +
+                    "🌳 เดินหรือยืดเส้นสั้น ๆ<br>" +
+                    "💬 ทักหาเพื่อน 1 คน<br>" +
+                    "🐱 เล่นกับสัตว์เลี้ยง";
+
+            }
+
+
+            /* =========================
+               100%
+            ========================= */
+
+            else if (level === 100) {
+
+                battery.style.background = "#22c55e";
+
+                missionTitle.textContent =
+                    "💖 วันนี้แบตเต็มแล้ว";
+
+                missionText.innerHTML =
+                    "เก็บพลังดี ๆ นี้ไว้ให้ตัวเองนะ 🌷";
+
+                mission.innerHTML =
+                    "🌸 ภารกิจส่งต่อพลังดี ๆ<br><br>" +
+
+                    "ลองตอบคำถามนี้กับตัวเอง<br><br>" +
+
+                    "<strong>“วันนี้มีเรื่องอะไร 1 อย่างที่ฉันทำได้ดี?”</strong><br><br>" +
+
+                    "ไม่ต้องเป็นเรื่องใหญ่ก็ได้<br>" +
+
+                    "แม้แต่ “วันนี้ฉันลุกจากเตียงได้”<br>" +
+                    "ก็ถือว่าเก่งแล้ว 💜";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
