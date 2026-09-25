@@ -83,16 +83,18 @@ async function initializeLIFF() {
         console.log("LINE Login สำเร็จ");
 
         // ขอ ID Token
-        const idToken = liff.getIDToken();
+       let idToken = liff.getIDToken();
 
-        console.log(
-            "มี ID Token:",
-            idToken ? "YES" : "NO"
-        );
+if (!idToken) {
+    console.log("ยังไม่มี ID Token กำลัง Login ใหม่...");
 
-        if (!idToken) {
-            throw new Error("ไม่พบ LINE ID Token");
-        }
+    if (!liff.isInClient()) {
+        liff.login();
+        return;
+    }
+
+    throw new Error("LINE ไม่ได้ส่ง ID Token มาให้");
+}
 
         // ส่ง ID Token ไป Supabase
         console.log("กำลังส่งข้อมูลไป Supabase...");
