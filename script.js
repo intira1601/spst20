@@ -89,23 +89,17 @@ async function initializeLIFF() {
         console.log("ได้รับ LINE ID Token แล้ว");
 
         // ส่ง Token ไปยัง Backend
-        const response = await fetch(API_URL, {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                idToken: idToken,
-
-                // ขั้นตอนนี้เป็นการยืนยันว่า
-                // ผู้ใช้ยินยอมเข้าร่วมระบบแล้ว
-                consented: true
-            })
-
-        });
+       const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_PUBLISHABLE_KEY
+    },
+    body: JSON.stringify({
+        idToken: idToken,
+        consented: true
+    })
+});
 
         const data = await response.json();
 
