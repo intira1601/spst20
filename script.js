@@ -57,24 +57,27 @@ const progressPercent = document.getElementById("progressPercent");
 // =============================
 
 async function initializeLIFF() {
-
     try {
+        console.log("เริ่ม LIFF...");
 
         await liff.init({
             liffId: LIFF_ID
         });
 
         console.log("LIFF initialized");
+        console.log("อยู่ใน LINE:", liff.isInClient());
+        console.log("Login:", liff.isLoggedIn());
 
-        // ถ้ายังไม่ได้ Login
-        if (!liff.isLoggedIn()) {
-
-            console.log("ยังไม่ได้ Login");
-
-            // เปิดหน้า Login ของ LINE
+        // ถ้าเปิดจาก LINE อยู่ ไม่ควรเรียก liff.login() ซ้ำ
+        if (!liff.isInClient() && !liff.isLoggedIn()) {
+            console.log("กำลัง Login LINE...");
             liff.login();
-
             return;
+        }
+
+        // ตรวจว่า Login สำเร็จ
+        if (!liff.isLoggedIn()) {
+            throw new Error("LINE ยังไม่ได้ Login");
         }
 
         console.log("LINE Login สำเร็จ");
@@ -82,34 +85,42 @@ async function initializeLIFF() {
         // ขอ ID Token
         const idToken = liff.getIDToken();
 
+        console.log(
+            "มี ID Token:",
+            idToken ? "YES" : "NO"
+        );
+
         if (!idToken) {
             throw new Error("ไม่พบ LINE ID Token");
         }
 
-        console.log("ได้รับ LINE ID Token แล้ว");
+        // ส่ง ID Token ไป Supabase
+        console.log("กำลังส่งข้อมูลไป Supabase...");
 
-        // ส่ง Token ไปยัง Backend
         const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_PUBLISHABLE_KEY
-    },
-    body: JSON.stringify({
-        idToken: idToken,
-        consented: true
-    })
-});
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_PUBLISHABLE_KEY
+            },
+            body: JSON.stringify({
+                idToken: idToken,
+                consented: true
+            })
+        });
+
+        console.log("Supabase status:", response.status);
 
         const data = await response.json();
 
-        console.log("Backend response:", data);
+        console.log("Supabase response:", data);
 
         if (!response.ok) {
-            throw new Error(data.error || "ไม่สามารถเชื่อมต่อระบบได้");
+            throw new Error(
+                data.error || `Supabase error ${response.status}`
+            );
         }
 
-        // เก็บ Participant ID
         participantId = data.participant_id;
 
         console.log(
@@ -122,8 +133,8 @@ async function initializeLIFF() {
         console.error("LIFF Error:", error);
 
         alert(
-             "เกิดข้อผิดพลาด\n\n" +
-        error.message
+            "เกิดข้อผิดพลาด\n\n" +
+            error.message
         );
     }
 }
