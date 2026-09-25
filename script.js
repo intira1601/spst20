@@ -3,7 +3,7 @@
 // ใช้ key จากไฟล์แรกที่ให้มา โปรดตรวจให้ตรงกับ Supabase Dashboard
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui0-0dg_LK0NR5-q";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
 const REDIRECT_URL = "https://intira1601.github.io/spst20/";
 
 const questions = [
