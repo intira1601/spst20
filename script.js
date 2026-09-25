@@ -5,7 +5,7 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL =
     "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
-
+const SUPABASE_PUBLISHABLE_KEY = "ใส่ Publishable Key ของ Supabase ตรงนี้";
 // เก็บ Participant ID ที่ได้จากระบบ
 let participantId = null;
 
@@ -89,7 +89,7 @@ async function initializeLIFF() {
         console.log("ได้รับ LINE ID Token แล้ว");
 
         // ส่ง Token ไปยัง Backend
-       const response = await fetch(API_URL, {
+        const response = await fetch(API_URL, {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
