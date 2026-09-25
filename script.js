@@ -1,6 +1,6 @@
 "use strict";
 
-// ใช้ key จากไฟล์แรกที่ให้มา โปรดตรวจให้ตรงกับ Supabase Dashboard
+// การเชื่อมต่อโครงการเดิม
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
@@ -51,34 +51,93 @@ function setupAssessment() {
     let busy = false;
     let liffReady = false;
 
-    // สร้างส่วนเชื่อมต่อใน HTML เดิมได้ ไม่จำเป็นต้องเพิ่ม element เอง
-    const panel = document.createElement("div");
-    const notice = document.createElement("p");
-    notice.textContent = "ระบบใช้รหัสบัญชี LINE เพื่อจดจำผู้เข้าร่วมเดิมและเชื่อมข้อมูลแต่ละครั้ง โดยใช้รหัสผู้เข้าร่วมแทนชื่อจริง";
-    const label = document.createElement("label");
-    const consent = document.createElement("input");
-    consent.type = "checkbox";
-    label.append(consent, document.createTextNode(" ฉันยินยอมให้ระบบสร้างหรือค้นหารหัสผู้เข้าร่วมโดยใช้บัญชี LINE"));
-    const connectButton = document.createElement("button");
-    connectButton.type = "button";
-    connectButton.textContent = "ยินยอมและเชื่อมต่อระบบ";
-    const status = document.createElement("p");
-    status.setAttribute("role", "status");
-    status.style.whiteSpace = "pre-line";
-    let participantDisplay = get("participantDisplay");
-    if (!participantDisplay) {
-        participantDisplay = document.createElement("p");
-        participantDisplay.id = "participantDisplay";
-        panel.append(participantDisplay);
-    }
-    panel.prepend(notice, label, connectButton, status);
-    startButton.before(panel);
+    // แยกหน้าความยินยอมออกจากหน้าเตรียมประเมิน
+    const style = document.createElement("style");
+    style.textContent = `
+      .container.research-flow { box-sizing:border-box; width:calc(100% - 32px); max-width:620px; margin:32px auto; padding:36px 28px; border-radius:28px; background:#fff; color:#403750; box-shadow:0 16px 50px #70479912; text-align:left; }
+      .research-flow *, .research-flow *::before, .research-flow *::after { box-sizing:border-box; }
+      .research-flow [hidden] { display:none !important; }
+      .research-flow .flow-steps {display:flex; gap:10px; margin-bottom:30px; font-size:14px; color:#82758f;}
+      .research-flow .flow-step {flex:1; border-top:3px solid #eae2f3; padding-top:10px;}
+      .research-flow .flow-step.active {border-color:#9663d8;color:#7146aa;font-weight:700;}
+      .research-flow .flow-icon {width:56px;height:56px;border-radius:18px;background:#f4ecfc;display:grid;place-items:center;font-size:28px;margin-bottom:18px;}
+      .research-flow h1 {font-size:clamp(25px,5vw,32px);line-height:1.4;color:#49325f;margin:0 0 12px;}
+      .research-flow p {font-size:16px;line-height:1.8;margin:0 0 16px;color:#665b73;}
+      .research-flow .flow-card {background:#faf7fd;border:1px solid #eee4f7;border-radius:18px;padding:20px;margin:22px 0;}
+      .research-flow .flow-card h2 {font-size:17px;color:#554062;margin:0 0 10px;}
+      .research-flow .flow-card p:last-child {margin-bottom:0;}
+      .research-flow .flow-consent {display:flex;align-items:flex-start;gap:12px;padding:16px 0;cursor:pointer;font-size:16px;line-height:1.7;text-align:left;background:none;}
+      .research-flow .flow-consent input {appearance:auto;flex:0 0 20px;width:20px;height:20px;margin:5px 0 0;accent-color:#925acb;}
+      .research-flow button {display:block;width:100%;margin:16px 0 0;padding:16px 18px;min-height:54px;border:0;border-radius:16px;background:linear-gradient(110deg,#a377e9,#dc55ad);color:#fff;font:inherit;font-size:18px;font-weight:700;cursor:pointer;}
+      .research-flow button:disabled {opacity:.45;cursor:not-allowed;}
+      .research-flow button:focus-visible,.research-flow input:focus-visible {outline:3px solid #7546af;outline-offset:4px;}
+      .research-flow .flow-status {white-space:pre-line;font-size:14px;margin:16px 0 0;overflow-wrap:anywhere;}
+      .research-flow .flow-id {font-family:ui-monospace,monospace;font-size:30px;letter-spacing:2px;color:#7546af;margin:6px 0 12px;font-weight:700;}
+      .research-flow .flow-tag {display:inline-block;padding:5px 12px;border-radius:99px;background:#f2eafa;color:#7a4db0;font-size:13px;margin-bottom:14px;}
+      @media(max-width:480px){.container.research-flow{margin:16px auto;padding:26px 20px;border-radius:22px}.research-flow .flow-steps{font-size:12px;gap:8px}}
+    `;
+    document.head.append(style);
+    startPage.classList.add("research-flow");
+    startPage.innerHTML = `
+      <nav class="flow-steps" aria-label="ขั้นตอนก่อนทำแบบประเมิน">
+        <span class="flow-step active" id="consentStep" aria-current="step">01 · ความยินยอม</span>
+        <span class="flow-step" id="readyStep">02 · พร้อมประเมิน</span>
+      </nav>
+      <section id="consentView" aria-labelledby="consentTitle">
+        <div class="flow-icon" aria-hidden="true">♡</div>
+        <h1 id="consentTitle">ก่อนเริ่ม มาทำความเข้าใจกัน</h1>
+        <p>โปรดอ่านข้อมูลการใช้รหัสผู้เข้าร่วม แล้วเลือกยินยอมเพื่อเข้าสู่แบบประเมินความเครียด</p>
+        <div class="flow-card">
+          <h2>ระบบจดจำคุณอย่างไร</h2>
+          <p>ระบบใช้รหัสบัญชี LINE เพื่อค้นหาหรือสร้างรหัสผู้เข้าร่วม โดยไม่ขอให้คุณกรอกชื่อจริง</p>
+          <p>รหัสนี้ใช้เชื่อมข้อมูลการใช้งานแต่ละครั้งกับผู้เข้าร่วมเดิม ระบบจึงยังเชื่อมโยงบัญชี LINE กับรหัสผู้เข้าร่วมได้</p>
+        </div>
+        <label class="flow-consent"><input id="researchConsent" type="checkbox"><span>ฉันยินยอมให้ระบบใช้รหัสบัญชี LINE เพื่อสร้างหรือค้นหารหัสผู้เข้าร่วม</span></label>
+        <button id="connectResearch" type="button">ยินยอมและดำเนินการต่อ</button>
+        <p id="connectionStatus" class="flow-status" role="status" aria-live="polite"></p>
+      </section>
+      <section id="readyView" aria-labelledby="readyTitle" hidden>
+        <span class="flow-tag">SPST-20 · 20 ข้อ</span>
+        <h1 id="readyTitle" tabindex="-1">พร้อมเช็กความเครียดของคุณ</h1>
+        <p>แบบประเมินความเครียดสำหรับนักศึกษาพยาบาล</p>
+        <div class="flow-card">
+          <h2>รหัสผู้เข้าร่วมของคุณ</h2>
+          <p id="participantDisplay" class="flow-id"></p>
+          <p>นี่คือรหัสที่ระบบสุ่มให้เพื่อใช้แทนชื่อในข้อมูลวิจัย ช่วยเชื่อมการประเมินแต่ละครั้งของคุณ เมื่อกลับมาด้วยบัญชี LINE เดิม ระบบจะค้นหารหัสเดิมให้</p>
+          <p>รหัสนี้ไม่ใช่รหัสผ่าน และไม่ต้องกรอกก่อนทำแบบประเมิน</p>
+        </div>
+        <div class="flow-card">
+          <h2>วิธีตอบแบบประเมิน</h2>
+          <p>ให้นึกถึงเหตุการณ์ในช่วง 6 เดือนที่ผ่านมา แล้วเลือกคำตอบที่ตรงกับความรู้สึกของคุณในแต่ละข้อ</p>
+        </div>
+      </section>
+    `;
+    const consent = get("researchConsent");
+    const connectButton = get("connectResearch");
+    const status = get("connectionStatus");
+    const participantDisplay = get("participantDisplay");
+    const consentView = get("consentView");
+    const readyView = get("readyView");
+    readyView.append(startButton);
+    startButton.textContent = "เริ่มทำแบบประเมิน";
     startButton.type = "button";
     nextButton.type = "button";
     startButton.disabled = true;
     questionContainer.style.display = "none";
     get("resultContainer").style.display = "none";
     get("adviceButton").hidden = true;
+
+    function showReadyPage() {
+        participantDisplay.textContent = participantId;
+        consentView.hidden = true;
+        readyView.hidden = false;
+        get("consentStep").classList.remove("active");
+        get("consentStep").removeAttribute("aria-current");
+        get("readyStep").classList.add("active");
+        get("readyStep").setAttribute("aria-current", "step");
+        startPage.scrollIntoView({ block: "start" });
+        get("readyTitle").focus({ preventScroll: true });
+    }
 
     function updateControls() {
         connectButton.disabled = busy || !consent.checked || !!participantId;
@@ -155,7 +214,7 @@ function setupAssessment() {
                 throw new Error("API ไม่ส่ง participant_id ที่ถูกต้องกลับมา");
             }
             participantId = data.participant_id;
-            participantDisplay.textContent = "รหัสผู้เข้าร่วมของคุณ: " + participantId;
+            showReadyPage();
             status.textContent = "เชื่อมต่อสำเร็จ สามารถเริ่มทำแบบประเมินได้";
             connectButton.textContent = "เชื่อมต่อแล้ว";
         } catch (error) {
@@ -171,7 +230,7 @@ function setupAssessment() {
         }
     });
     updateControls();
-    status.textContent = "โปรดยินยอมและเชื่อมต่อระบบเพื่อรับรหัสผู้เข้าร่วมก่อนเริ่มประเมิน";
+    status.textContent = "";
 
 let currentQuestion = 1;
 
