@@ -1,22 +1,10 @@
-```js
-// =============================
-// LIFF CONFIG
-// =============================
+"use strict";
 
+// ใช้ key จากไฟล์แรกที่ให้มา โปรดตรวจให้ตรงกับ Supabase Dashboard
 const LIFF_ID = "2011737778-o7ntPvgO";
-
-const API_URL =
-    "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_mMRYahDfhiPXDcj-Ui0-0dg_LK0NR5-q";
-
-let participantId = null;
-
-
-// =============================
-// คำถาม SPST-20
-// =============================
+const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
+const REDIRECT_URL = "https://intira1601.github.io/spst20/";
 
 const questions = [
     { text: "กลัวทำงานผิดพลาด" },
@@ -42,313 +30,153 @@ const questions = [
 ];
 
 
-// =============================
-// เชื่อมต่อ HTML
-// =============================
 
-const startButton = document.getElementById("startButton");
-const startPage = document.querySelector(".container");
-const questionContainer = document.getElementById("questionContainer");
-const nextButton = document.getElementById("nextButton");
-const questionNumber = document.getElementById("questionNumber");
-const questionText = document.getElementById("questionText");
-const progressFill = document.getElementById("progressFill");
-const progressPercent = document.getElementById("progressPercent");
+function setupAssessment() {
+    const requiredIds = ["startButton", "questionContainer", "nextButton", "questionNumber", "questionText", "progressFill", "progressPercent", "resultContainer", "score", "stressLevel", "resultDescription", "adviceButton"];
+    const missing = requiredIds.filter(id => !document.getElementById(id));
+    const startPage = document.querySelector(".container");
+    if (missing.length || !startPage) {
+        alert("HTML ขาดส่วนที่จำเป็น: " + [...missing, ...(!startPage ? [".container"] : [])].join(", "));
+        return;
+    }
+    const get = id => document.getElementById(id);
+    const startButton = get("startButton");
+    const questionContainer = get("questionContainer");
+    const nextButton = get("nextButton");
+    const questionNumber = get("questionNumber");
+    const questionText = get("questionText");
+    const progressFill = get("progressFill");
+    const progressPercent = get("progressPercent");
+    let participantId = null;
+    let busy = false;
+    let liffReady = false;
 
+    // สร้างส่วนเชื่อมต่อใน HTML เดิมได้ ไม่จำเป็นต้องเพิ่ม element เอง
+    const panel = document.createElement("div");
+    const notice = document.createElement("p");
+    notice.textContent = "ระบบใช้รหัสบัญชี LINE เพื่อจดจำผู้เข้าร่วมเดิมและเชื่อมข้อมูลแต่ละครั้ง โดยใช้รหัสผู้เข้าร่วมแทนชื่อจริง";
+    const label = document.createElement("label");
+    const consent = document.createElement("input");
+    consent.type = "checkbox";
+    label.append(consent, document.createTextNode(" ฉันยินยอมให้ระบบสร้างหรือค้นหารหัสผู้เข้าร่วมโดยใช้บัญชี LINE"));
+    const connectButton = document.createElement("button");
+    connectButton.type = "button";
+    connectButton.textContent = "ยินยอมและเชื่อมต่อระบบ";
+    const status = document.createElement("p");
+    status.setAttribute("role", "status");
+    status.style.whiteSpace = "pre-line";
+    let participantDisplay = get("participantDisplay");
+    if (!participantDisplay) {
+        participantDisplay = document.createElement("p");
+        participantDisplay.id = "participantDisplay";
+        panel.append(participantDisplay);
+    }
+    panel.prepend(notice, label, connectButton, status);
+    startButton.before(panel);
+    startButton.type = "button";
+    nextButton.type = "button";
+    startButton.disabled = true;
+    questionContainer.style.display = "none";
+    get("resultContainer").style.display = "none";
+    get("adviceButton").hidden = true;
 
-// =============================
-// ตรวจว่า ID Token หมดอายุหรือไม่
-// =============================
+    function updateControls() {
+        connectButton.disabled = busy || !consent.checked || !!participantId;
+        consent.disabled = busy || !!participantId;
+        startButton.disabled = !participantId;
+    }
+    consent.addEventListener("change", updateControls);
 
-function isTokenExpired(idToken) {
+    function isTokenExpired(token) {
+        try {
+            const part = token.split(".")[1];
+            if (!part || token.split(".").length !== 3) return true;
+            const base64 = part.replace(/-/g, "+").replace(/_/g, "/");
+            const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+            const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+            const payload = JSON.parse(new TextDecoder().decode(bytes));
+            return typeof payload.exp !== "number" || Date.now() >= payload.exp * 1000 - 30000;
+        } catch { return true; }
+    }
 
-    try {
-
-        const parts = idToken.split(".");
-
-        if (parts.length !== 3) {
-            return true;
+    async function initializeLIFF() {
+        if (!window.liff) throw new Error("โหลด LINE SDK ไม่สำเร็จ กรุณาตรวจอินเทอร์เน็ตแล้วเปิดหน้าใหม่");
+        if (!liffReady) {
+            status.textContent = "กำลังเชื่อมต่อ LINE…";
+            await liff.init({ liffId: LIFF_ID });
+            liffReady = true;
         }
-
-        const payload = JSON.parse(
-            decodeURIComponent(
-                atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
-                    .split("")
-                    .map(function (c) {
-                        return "%" +
-                            ("00" + c.charCodeAt(0).toString(16))
-                                .slice(-2);
-                    })
-                    .join("")
-            )
-        );
-
-        console.log("Token exp:", payload.exp);
-        console.log(
-            "Token หมดอายุ:",
-            payload.exp
-                ? new Date(payload.exp * 1000).toLocaleString()
-                : "ไม่พบ exp"
-        );
-
-        if (!payload.exp) {
-            return true;
+        if (!liff.isLoggedIn()) {
+            if (liff.isInClient()) throw new Error("ไม่พบการเข้าสู่ระบบ LINE กรุณาปิดแล้วเปิดผ่าน LINE OA ใหม่");
+            status.textContent = "กำลังไปหน้าเข้าสู่ระบบ LINE หลังกลับมาโปรดกดยินยอมและเชื่อมต่ออีกครั้ง";
+            liff.login({ redirectUri: REDIRECT_URL });
+            return false;
         }
-
-        // เผื่อเวลา 30 วินาที
-        return Date.now() >= (payload.exp * 1000) - 30000;
-
-    } catch (error) {
-
-        console.error("อ่าน ID Token ไม่ได้:", error);
-
         return true;
     }
-}
 
-
-// =============================
-// เริ่มต้น LIFF
-// =============================
-
-async function initializeLIFF() {
-
-    try {
-
-        console.log("เริ่ม LIFF...");
-
-        await liff.init({
-            liffId: LIFF_ID
-        });
-
-        console.log("LIFF initialized");
-
-        console.log(
-            "อยู่ใน LINE:",
-            liff.isInClient()
-        );
-
-        console.log(
-            "Login:",
-            liff.isLoggedIn()
-        );
-
-
-        // =============================
-        // ถ้ายังไม่ได้ Login
-        // =============================
-
-        if (!liff.isLoggedIn()) {
-
-            console.log("กำลัง Login LINE...");
-
-            liff.login({
-                redirectUri: window.location.href
-            });
-
-            return;
-        }
-
-
-        console.log("LINE Login สำเร็จ");
-
-
-        // =============================
-        // ขอ ID Token
-        // =============================
-
-        let idToken = liff.getIDToken();
-
-
-        // =============================
-        // ถ้าไม่มี ID Token
-        // =============================
-
-        if (!idToken) {
-
-            console.log("ไม่พบ ID Token");
-
-            if (!liff.isInClient()) {
-
-                liff.logout();
-
-                liff.login({
-                    redirectUri: window.location.href
+    connectButton.addEventListener("click", async () => {
+        if (busy || participantId || !consent.checked) return;
+        busy = true;
+        updateControls();
+        try {
+            if (!await initializeLIFF()) return;
+            const idToken = liff.getIDToken();
+            if (!idToken) throw new Error("ไม่พบ LINE ID Token กรุณาตรวจว่า LIFF เปิด scope openid แล้ว จากนั้นปิดและเปิดหน้าใหม่");
+            if (isTokenExpired(idToken)) {
+                if (!liff.isInClient()) {
+                    liff.logout();
+                    status.textContent = "การเข้าสู่ระบบหมดอายุ กรุณากดเชื่อมต่ออีกครั้งเพื่อเข้าสู่ระบบใหม่";
+                    return;
+                }
+                throw new Error("การเข้าสู่ระบบหมดอายุ กรุณาปิดหน้านี้แล้วเปิดผ่าน LINE OA ใหม่");
+            }
+            status.textContent = "กำลังค้นหาหรือสร้างรหัสผู้เข้าร่วม…";
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 25000);
+            let response, raw;
+            try {
+                response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", apikey: SUPABASE_PUBLISHABLE_KEY },
+                    body: JSON.stringify({ idToken, consented: true }),
+                    signal: controller.signal
                 });
-
-                return;
+                raw = await response.text();
+            } finally { clearTimeout(timeout); }
+            let data;
+            try { data = JSON.parse(raw); }
+            catch { throw new Error("API ตอบกลับไม่ใช่ JSON (HTTP " + response.status + ")"); }
+            if (!response.ok) {
+                const detail = [data?.error || data?.message || "เชื่อมต่อ API ไม่สำเร็จ", data?.line_error, data?.line_error_description].filter(Boolean).join(" | ");
+                throw new Error("HTTP " + response.status + ": " + detail);
             }
-
-            throw new Error(
-                "LINE ไม่ได้ส่ง ID Token มาให้"
-            );
-        }
-
-
-        console.log(
-            "มี ID Token: YES"
-        );
-
-
-        // =============================
-        // ตรวจ Token หมดอายุ
-        // =============================
-
-        if (isTokenExpired(idToken)) {
-
-            console.log(
-                "ID Token หมดอายุ กำลัง Login ใหม่..."
-            );
-
-            // ใน External Browser ให้ Login ใหม่
-            if (!liff.isInClient()) {
-
-                liff.logout();
-
-                liff.login({
-                    redirectUri: window.location.href
-                });
-
-                return;
+            if (typeof data?.participant_id !== "string" || !data.participant_id.trim()) {
+                throw new Error("API ไม่ส่ง participant_id ที่ถูกต้องกลับมา");
             }
-
-            // ถ้าอยู่ใน LINE แล้ว Token หมดอายุ
-            throw new Error(
-                "LINE ID Token หมดอายุ กรุณาปิดหน้านี้แล้วเปิด “เช็กใจวันนี้” จาก LINE OA ใหม่อีกครั้ง"
-            );
+            participantId = data.participant_id;
+            participantDisplay.textContent = "รหัสผู้เข้าร่วมของคุณ: " + participantId;
+            status.textContent = "เชื่อมต่อสำเร็จ สามารถเริ่มทำแบบประเมินได้";
+            connectButton.textContent = "เชื่อมต่อแล้ว";
+        } catch (error) {
+            let message = error instanceof Error ? error.message : "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+            if (error?.name === "AbortError") message = "ระบบตอบกลับช้าเกินไป กรุณาลองเชื่อมต่ออีกครั้ง";
+            else if (error instanceof TypeError) message = "เชื่อมต่อไม่สำเร็จ กรุณาตรวจอินเทอร์เน็ต หากยังพบปัญหาให้ตรวจ CORS และการเผยแพร่ research-api";
+            status.textContent = "เชื่อมต่อไม่สำเร็จ: " + message;
+            connectButton.textContent = "ลองเชื่อมต่ออีกครั้ง";
+            console.error("Research connection failed:", message);
+        } finally {
+            busy = false;
+            updateControls();
         }
-
-
-        console.log(
-            "ID Token ยังไม่หมดอายุ"
-        );
-
-
-        // =============================
-        // ส่ง ID Token ไป Supabase
-        // =============================
-
-        console.log(
-            "กำลังส่งข้อมูลไป Supabase..."
-        );
-
-        const response = await fetch(
-            API_URL,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": SUPABASE_PUBLISHABLE_KEY
-                },
-
-                body: JSON.stringify({
-                    idToken: idToken,
-                    consented: true
-                })
-            }
-        );
-
-
-        console.log(
-            "Supabase status:",
-            response.status
-        );
-
-
-        const data = await response.json();
-
-
-        console.log(
-            "Supabase response:",
-            data
-        );
-
-
-        // =============================
-        // ถ้า Supabase ส่ง Error
-        // =============================
-
-        if (!response.ok) {
-
-            throw new Error(
-                (data.error || "Supabase error") +
-                "\n" +
-                (data.line_error || "") +
-                "\n" +
-                (data.line_error_description || "")
-            );
-        }
-
-
-        // =============================
-        // ได้ Participant ID
-        // =============================
-
-        participantId =
-            data.participant_id;
-
-
-        console.log(
-            "Participant ID:",
-            participantId
-        );
-
-
-        console.log(
-            "เป็น Participant เดิม:",
-            data.existing
-        );
-
-
-        // =============================
-        // เชื่อมต่อสำเร็จ
-        // =============================
-
-        console.log(
-            "เชื่อมต่อระบบสำเร็จ"
-        );
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "LIFF Error:",
-            error
-        );
-
-
-        alert(
-            "เกิดข้อผิดพลาด\n\n" +
-            error.message
-        );
-    }
-}
-
-
-// =============================
-// เรียก LIFF เมื่อเปิดเว็บ
-// =============================
-
-window.addEventListener(
-    "load",
-    function () {
-
-        initializeLIFF();
-
-    }
-);
-
-
-// =============================
-// ระบบ SPST-20
-// =============================
+    });
+    updateControls();
+    status.textContent = "โปรดยินยอมและเชื่อมต่อระบบเพื่อรับรหัสผู้เข้าร่วมก่อนเริ่มประเมิน";
 
 let currentQuestion = 1;
 
 let totalScore = 0;
+let completed = false;
 
 
 // =============================
@@ -408,6 +236,8 @@ nextButton.addEventListener(
     function () {
 
 
+        if (completed || !participantId) return;
+
         const selectedAnswer =
             document.querySelector(
                 'input[name="answer"]:checked'
@@ -435,8 +265,11 @@ nextButton.addEventListener(
             );
 
 
-        totalScore =
-            totalScore + score;
+        if (!Number.isInteger(score) || score < 1 || score > 5) {
+            alert("ค่าคำตอบไม่ถูกต้อง กรุณาเลือกใหม่");
+            return;
+        }
+        totalScore += score;
 
 
         console.log(
@@ -503,8 +336,9 @@ nextButton.addEventListener(
 
         else {
 
-            questionContainer.style.display =
-                "none";
+            completed = true;
+            nextButton.disabled = true;
+            questionContainer.style.display = "none";
 
 
             const resultContainer =
@@ -619,10 +453,11 @@ nextButton.addEventListener(
             // เก็บคะแนนชั่วคราว
             // =============================
 
-            localStorage.setItem(
-                "stressScore",
-                totalScore
-            );
+            try {
+                localStorage.setItem("stressScore", String(totalScore));
+            } catch {
+                console.warn("ไม่สามารถเก็บคะแนนชั่วคราวบนอุปกรณ์นี้ได้");
+            }
 
 
             // =============================
@@ -655,4 +490,11 @@ nextButton.addEventListener(
 
     }
 );
-```
+
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupAssessment, { once: true });
+} else {
+    setupAssessment();
+}
