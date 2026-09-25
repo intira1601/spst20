@@ -122,8 +122,8 @@ async function initializeLIFF() {
         console.error("LIFF Error:", error);
 
         alert(
-            "ไม่สามารถเชื่อมต่อระบบได้\n\n" +
-            "กรุณาลองเปิดผ่าน LINE อีกครั้งค่ะ"
+             "เกิดข้อผิดพลาด\n\n" +
+        error.message
         );
     }
 }
