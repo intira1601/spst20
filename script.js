@@ -5,7 +5,7 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL =
     "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
-const SUPABASE_PUBLISHABLE_KEY = "ใส่ Publishable Key ของ Supabase ตรงนี้";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
 // เก็บ Participant ID ที่ได้จากระบบ
 let participantId = null;
 
