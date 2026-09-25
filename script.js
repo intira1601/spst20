@@ -4,8 +4,8 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
-const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=consent-v8";
-const PENDING_CONSENT_KEY = "spst20.pendingConsent.v8";
+const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=assessment-v9";
+const PENDING_CONSENT_KEY = "spst20.pendingConsent.v9";
 
 const questions = [
     { text: "กลัวทำงานผิดพลาด" },
@@ -91,9 +91,9 @@ function setupAssessment() {
         <div class="flow-card">
           <h2>ระบบจดจำคุณอย่างไร</h2>
           <p>ระบบใช้รหัสบัญชี LINE เพื่อค้นหาหรือสร้างรหัสผู้เข้าร่วม โดยไม่ขอให้คุณกรอกชื่อจริง</p>
-          <p>รหัสนี้ใช้เชื่อมข้อมูลการใช้งานแต่ละครั้งกับผู้เข้าร่วมเดิม ระบบจึงยังเชื่อมโยงบัญชี LINE กับรหัสผู้เข้าร่วมได้</p>
+          <p>เมื่อคุณตอบครบ 20 ข้อ ระบบจะบันทึกคำตอบ คะแนน ระดับผลการประเมิน และเวลาที่บันทึกไว้กับรหัสผู้เข้าร่วม ระบบยังเชื่อมโยงบัญชี LINE กับรหัสนี้ได้</p>
         </div>
-        <label class="flow-consent"><input id="researchConsent" type="checkbox"><span>ฉันยินยอมให้ระบบใช้รหัสบัญชี LINE เพื่อสร้างหรือค้นหารหัสผู้เข้าร่วม</span></label>
+        <label class="flow-consent"><input id="researchConsent" type="checkbox"><span>ฉันยินยอมให้ระบบใช้รหัสบัญชี LINE เพื่อเชื่อมรหัสผู้เข้าร่วมและบันทึกคำตอบกับผลประเมินตามที่อธิบายข้างต้น</span></label>
         <button id="connectResearch" type="button">ยินยอมและดำเนินการต่อ</button>
         <p id="connectionStatus" class="flow-status" role="status" aria-live="polite"></p>
       </section>
@@ -253,6 +253,67 @@ function setupAssessment() {
         }
     }
 
+    const saveStatus = document.createElement("p");
+    saveStatus.id = "assessmentSaveStatus";
+    saveStatus.setAttribute("role", "status");
+    saveStatus.style.whiteSpace = "pre-line";
+    const retrySave = document.createElement("button");
+    retrySave.type = "button";
+    retrySave.textContent = "ลองบันทึกอีกครั้ง";
+    retrySave.hidden = true;
+    get("resultContainer").append(saveStatus, retrySave);
+    let savingAssessment = false;
+    let assessmentSaved = false;
+    let submissionId = null;
+    const answers = [];
+
+    function makeSubmissionId() {
+        if (crypto.randomUUID) return crypto.randomUUID();
+        const bytes = crypto.getRandomValues(new Uint8Array(16));
+        bytes[6] = (bytes[6] & 15) | 64;
+        bytes[8] = (bytes[8] & 63) | 128;
+        const hex = Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+        return [hex.slice(0,8),hex.slice(8,12),hex.slice(12,16),hex.slice(16,20),hex.slice(20)].join("-");
+    }
+
+    async function saveAssessment() {
+        if (savingAssessment || assessmentSaved || answers.length !== 20) return;
+        savingAssessment = true;
+        retrySave.hidden = true;
+        saveStatus.textContent = "กำลังบันทึกผลประเมิน กรุณาอย่าเพิ่งปิดหน้านี้…";
+        try {
+            submissionId ||= makeSubmissionId();
+            const idToken = liff.getIDToken();
+            if (!idToken || isTokenExpired(idToken)) throw new Error("การเข้าสู่ระบบหมดอายุ ผลครั้งนี้ยังไม่ถูกบันทึก กรุณาเปิดผ่าน LINE ใหม่และทำแบบประเมินอีกครั้ง");
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 25000);
+            let response, raw;
+            try {
+                response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", apikey: SUPABASE_PUBLISHABLE_KEY },
+                    body: JSON.stringify({ action: "save_assessment", idToken, submission_id: submissionId, answers }),
+                    signal: controller.signal
+                });
+                raw = await response.text();
+            } finally { clearTimeout(timeout); }
+            let data;
+            try { data = JSON.parse(raw); } catch { throw new Error("API ตอบกลับไม่ใช่ JSON (HTTP " + response.status + ")"); }
+            if (!response.ok) throw new Error("HTTP " + response.status + ": " + (data?.error || data?.message || "บันทึกไม่สำเร็จ"));
+            if (!data.success || !data.assessment_id || data.submission_id !== submissionId || data.participant_id !== participantId || data.total_score !== totalScore) {
+                throw new Error("ผลตอบกลับไม่ตรงกับรายการที่ส่ง กรุณาลองบันทึกอีกครั้ง");
+            }
+            assessmentSaved = true;
+            saveStatus.textContent = "บันทึกผลประเมินเรียบร้อยแล้ว";
+            get("adviceButton").hidden = false;
+        } catch (error) {
+            const message = error?.name === "AbortError" ? "ระบบตอบกลับช้า" : error.message;
+            saveStatus.textContent = "ยังยืนยันการบันทึกไม่ได้: " + message + "\nหากเป็นปัญหาเครือข่าย โปรดคงหน้านี้ไว้แล้วกดลองบันทึกอีกครั้ง";
+            retrySave.hidden = false;
+        } finally { savingAssessment = false; }
+    }
+    retrySave.addEventListener("click", saveAssessment);
+
 let currentQuestion = 1;
 
 let totalScore = 0;
@@ -349,25 +410,8 @@ nextButton.addEventListener(
             alert("ค่าคำตอบไม่ถูกต้อง กรุณาเลือกใหม่");
             return;
         }
+        answers.push(score);
         totalScore += score;
-
-
-        console.log(
-            "ข้อที่:",
-            currentQuestion
-        );
-
-
-        console.log(
-            "คะแนนข้อนี้:",
-            score
-        );
-
-
-        console.log(
-            "คะแนนรวม:",
-            totalScore
-        );
 
 
         // =============================
@@ -544,27 +588,7 @@ nextButton.addEventListener(
             // แสดงปุ่มคำแนะนำ
             // =============================
 
-            document.getElementById(
-                "adviceButton"
-            ).hidden = false;
-
-
-            console.log(
-                "Participant ID:",
-                participantId
-            );
-
-
-            console.log(
-                "คะแนนสุดท้าย:",
-                totalScore
-            );
-
-
-            console.log(
-                "ระดับ:",
-                level
-            );
+            void saveAssessment();
 
         }
 
