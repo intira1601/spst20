@@ -4,7 +4,8 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
-const REDIRECT_URL = "https://intira1601.github.io/spst20/";
+const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=consent-v8";
+const PENDING_CONSENT_KEY = "spst20.pendingConsent.v8";
 
 const questions = [
     { text: "กลัวทำงานผิดพลาด" },
@@ -167,7 +168,9 @@ function setupAssessment() {
         }
         if (!liff.isLoggedIn()) {
             if (liff.isInClient()) throw new Error("ไม่พบการเข้าสู่ระบบ LINE กรุณาปิดแล้วเปิดผ่าน LINE OA ใหม่");
-            status.textContent = "กำลังไปหน้าเข้าสู่ระบบ LINE หลังกลับมาโปรดกดยินยอมและเชื่อมต่ออีกครั้ง";
+            status.textContent = "กำลังไปหน้าเข้าสู่ระบบ LINE…";
+            // เก็บเฉพาะความยินยอมชั่วคราวในแท็บนี้ ไม่เก็บ token
+            try { sessionStorage.setItem(PENDING_CONSENT_KEY, String(Date.now())); } catch {}
             liff.login({ redirectUri: REDIRECT_URL });
             return false;
         }
@@ -231,6 +234,24 @@ function setupAssessment() {
     });
     updateControls();
     status.textContent = "";
+
+    // กลับจาก LINE: ใช้ความยินยอมที่เพิ่งกดในแท็บเดิมได้ครั้งเดียว ภายใน 10 นาที
+    const callbackParams = new URLSearchParams(window.location.search);
+    if (callbackParams.has("code") && callbackParams.has("state")) {
+        let consentTime = 0;
+        try {
+            consentTime = Number(sessionStorage.getItem(PENDING_CONSENT_KEY));
+            sessionStorage.removeItem(PENDING_CONSENT_KEY);
+        } catch {}
+        const age = Date.now() - consentTime;
+        if (consentTime > 0 && age >= 0 && age < 10 * 60 * 1000) {
+            consent.checked = true;
+            updateControls();
+            connectButton.click();
+        } else {
+            status.textContent = "กลับจาก LINE แล้ว กรุณายืนยันความยินยอมเพื่อดำเนินการต่อ";
+        }
+    }
 
 let currentQuestion = 1;
 
