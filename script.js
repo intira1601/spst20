@@ -117,11 +117,15 @@ if (!idToken) {
 
         console.log("Supabase response:", data);
 
-        if (!response.ok) {
-            throw new Error(
-                data.error || `Supabase error ${response.status}`
-            );
-        }
+      if (!response.ok) {
+    throw new Error(
+        data.error +
+        "\n" +
+        (data.line_error || "") +
+        "\n" +
+        (data.line_error_description || "")
+    );
+}
 
         participantId = data.participant_id;
 
