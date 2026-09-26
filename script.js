@@ -4,8 +4,8 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
-const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=assessment-v9";
-const PENDING_CONSENT_KEY = "spst20.pendingConsent.v9";
+const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=research-v12";
+const PENDING_CONSENT_KEY = "spst20.pendingConsent.v12";
 
 const questions = [
     { text: "กลัวทำงานผิดพลาด" },
@@ -92,8 +92,9 @@ function setupAssessment() {
           <h2>ระบบจดจำคุณอย่างไร</h2>
           <p>ระบบใช้รหัสบัญชี LINE เพื่อค้นหาหรือสร้างรหัสผู้เข้าร่วม โดยไม่ขอให้คุณกรอกชื่อจริง</p>
           <p>เมื่อคุณตอบครบ 20 ข้อ ระบบจะบันทึกคำตอบ คะแนน ระดับผลการประเมิน และเวลาที่บันทึกไว้กับรหัสผู้เข้าร่วม ระบบยังเชื่อมโยงบัญชี LINE กับรหัสนี้ได้</p>
+          <p>เมื่อกดปุ่มไปทำกิจกรรม ระบบจะบันทึกชื่อกิจกรรมและเวลาที่บันทึกการกดเปิด โดยเชื่อมกับรหัสเดียวกัน การกดเปิดไม่ได้หมายความว่าทำกิจกรรมเสร็จ และส่วนบันทึกนี้ไม่เก็บเนื้อหาแชทหรือข้อความที่คุณเขียนในกิจกรรม</p>
         </div>
-        <label class="flow-consent"><input id="researchConsent" type="checkbox"><span>ฉันยินยอมให้ระบบใช้รหัสบัญชี LINE เพื่อเชื่อมรหัสผู้เข้าร่วมและบันทึกคำตอบกับผลประเมินตามที่อธิบายข้างต้น</span></label>
+        <label class="flow-consent"><input id="researchConsent" type="checkbox"><span>ฉันยินยอมให้ระบบใช้รหัสบัญชี LINE เพื่อเชื่อมรหัสผู้เข้าร่วมและบันทึกคำตอบ ผลประเมิน และการกดเปิดกิจกรรมตามที่อธิบายข้างต้น</span></label>
         <button id="connectResearch" type="button">ยินยอมและดำเนินการต่อ</button>
         <p id="connectionStatus" class="flow-status" role="status" aria-live="polite"></p>
       </section>
@@ -201,7 +202,7 @@ function setupAssessment() {
                 response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", apikey: SUPABASE_PUBLISHABLE_KEY },
-                    body: JSON.stringify({ idToken, consented: true }),
+                    body: JSON.stringify({ idToken, consented: true, research_consent_version: "research-v2" }),
                     signal: controller.signal
                 });
                 raw = await response.text();
