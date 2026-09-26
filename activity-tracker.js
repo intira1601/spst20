@@ -1,12 +1,9 @@
 "use strict";
-// Add after the existing inline script in advice.html. Does not replace it.
 (() => {
-  if (document.getElementById("activityResearchPanel")) return;
+  if (document.getElementById("activityAutoStatus")) return;
   const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
   const API_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
   const LIFF_ID = "2011737778-o7ntPvgO";
-  const RETURN_URL = "https://intira1601.github.io/spst20/advice.html?app=activities-v1";
-  const CONSENT_KEY = "spst.activities.pending.v1";
   const catalog = {
     music: "ฟังเพลงเพื่อผ่อนคลาย", express: "ระบายความรู้สึกแล้วขยำทิ้ง",
     battery: "เช็กก้อนแบตเตอรี่ใจ", box_breathing: "การหายใจแบบกล่อง",
@@ -28,28 +25,18 @@
     if (url.hostname === "www.prescreening.dmind.app") return "safety_check";
     return null;
   }
-  const panel = document.createElement("section");
-  panel.id = "activityResearchPanel";
-  panel.innerHTML = `
-    <h2>บันทึกกิจกรรมของคุณ</h2>
-    <p>เมื่อเปิดการบันทึก ระบบจะเก็บชื่อกิจกรรม เวลาที่กดเปิด และการยืนยันว่าทำเสร็จ โดยเชื่อมกับรหัสผู้เข้าร่วมเดิม ไม่เก็บข้อความสนทนาหรือสิ่งที่คุณเขียนในกิจกรรมผ่านส่วนบันทึกนี้</p>
-    <label><input type="checkbox" id="activityConsent"> ฉันยินยอมให้บันทึกข้อมูลกิจกรรมตามที่อธิบายข้างต้น</label>
-    <button type="button" id="activityConnect" disabled>ยินยอมและเปิดการบันทึก</button>
-    <p id="activityConnection" role="status" aria-live="polite"></p>
-    <p>คุณเปิดกิจกรรมได้แม้ไม่ได้เปิดการบันทึก เมื่อทำเสร็จให้กลับมาหน้านี้เพื่อกดยืนยัน</p>
-    <div id="activityRuns"></div>`;
-  const style = document.createElement("style");
-  style.textContent = `#activityResearchPanel{box-sizing:border-box;max-width:900px;margin:24px auto;padding:22px;border:1px solid #eadff4;border-radius:20px;background:#fff;color:#51425f;text-align:left;font:inherit}#activityResearchPanel h2{font-size:20px;margin:0 0 12px}#activityResearchPanel p{font-size:15px;line-height:1.7;white-space:pre-line;margin:12px 0}#activityResearchPanel label{display:flex;gap:10px;align-items:flex-start;line-height:1.7}#activityResearchPanel input{appearance:auto;width:20px;height:20px;flex-shrink:0;accent-color:#9663d8}#activityResearchPanel button{font:inherit;padding:12px 16px;background:#8657be;color:white;border:0;border-radius:12px;cursor:pointer;margin:10px 8px 0 0}#activityResearchPanel button:disabled{opacity:.5;cursor:default}#activityResearchPanel [hidden]{display:none!important}#activityResearchPanel .activity-run{border-top:1px solid #eadff4;margin-top:18px;padding-top:14px}#activityResearchPanel button:focus-visible{outline:3px solid #d788c8;outline-offset:3px}`;
-  document.head.append(style);
+
   const cards = document.getElementById("cardsContainer");
   if (!cards) return;
-  cards.before(panel);
-  const get = id => document.getElementById(id);
-  const consent = get("activityConsent"), connect = get("activityConnect"), status = get("activityConnection");
-  let initialized = false, connecting = false, participant = null;
-  const runs = [];
-  consent.addEventListener("change", () => { connect.disabled = !consent.checked || connecting; });
-
+  const status = document.createElement("p"); status.id = "activityAutoStatus";
+  status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+  status.style.cssText = "font-size:14px;line-height:1.7;color:#73617d;text-align:center;margin:16px 0;white-space:pre-line";
+  const back = document.createElement("a");
+  back.href = "index.html?app=research-v12"; back.textContent = "กลับหน้าเริ่มต้นเพื่อยืนยันข้อมูล";back.hidden = true;
+  const retryBox = document.createElement("div");retryBox.id = "activityRetryBox";
+  cards.before(status,back,retryBox);
+  const retryRows = new Set();
+  let participant = null, initialized = false, readyPromise;
   async function callApi(payload) {
     if (!window.liff || !liff.isLoggedIn()) throw new Error("กรุณาเข้าสู่ระบบ LINE ก่อนบันทึก");
     const token = liff.getIDToken();
@@ -70,82 +57,60 @@
     } finally { clearTimeout(timer); }
   }
 
-  async function enableTracking() {
-    if (!consent.checked || connecting || participant) return;
-    connecting = true; connect.disabled = true;
-    status.textContent = "กำลังเชื่อมรหัสผู้เข้าร่วม…";
-    try {
-      if (!window.liff) throw new Error("โหลด LINE SDK ไม่สำเร็จ กรุณาตรวจ script ใน advice.html");
-      if (!initialized) { await liff.init({liffId:LIFF_ID}); initialized = true; }
-      if (!liff.isLoggedIn()) {
-        if (liff.isInClient()) throw new Error("กรุณาปิดแล้วเปิดผ่าน LINE ใหม่");
-        try { sessionStorage.setItem(CONSENT_KEY, String(Date.now())); } catch {}
-        liff.login({redirectUri:RETURN_URL});
-        status.textContent = "กำลังไปหน้าเข้าสู่ระบบ LINE…";
-        return;
-      }
-      const data = await callApi({action:"activity_session"});
-      if (typeof data.participant_id !== "string" || !data.participant_id) throw new Error("ไม่พบรหัสผู้เข้าร่วม");
-      participant = data.participant_id;
-      consent.disabled = true; connect.hidden = true;
-      status.textContent = "เปิดการบันทึกแล้ว · รหัส " + participant + "\nเลือกกิจกรรมและกดปุ่มไปทำกิจกรรมตามปกติ";
-    } catch (error) {
-      status.textContent = "เชื่อมต่อไม่ได้: " + error.message + "\nยังสามารถเปิดกิจกรรมได้ แต่จะไม่บันทึกการเปิดครั้งนั้น";
-    } finally { connecting = false; connect.disabled = !consent.checked; }
-  }
-  connect.addEventListener("click", enableTracking);
 
-  async function saveEvent(run, type) {
-    if (run.busy || run.done || (type === "opened" && run.openSaved)) return;
-    run.busy = true; run.retry.hidden = true; run.complete.disabled = true;
-    run.message.textContent = "กำลังบันทึก…";
+  async function prepare() {
     try {
-      const data = await callApi({action:"save_activity", activity_code:run.code, run_id:run.id,
-        event_type:type, consented:true, consent_version:"activities-v1", expected_participant_id:participant});
-      if (data.participant_id !== participant || data.run_id !== run.id || data.event_type !== type || data.activity_code !== run.code) throw new Error("ผลตอบกลับไม่ตรงกับรายการที่ส่ง");
-      if (type === "opened") {
-        run.openSaved = true;
-        run.message.textContent = "บันทึกการกดเปิดแล้ว เมื่อทำเสร็จ กลับมากดยืนยันด้านล่าง";
-        run.complete.hidden = false;
-      } else {
-        run.done = true; run.complete.hidden = true;
-        run.message.textContent = "บันทึกแล้ว: คุณยืนยันว่าทำกิจกรรมนี้เสร็จแล้ว";
-      }
+      status.textContent = "กำลังเตรียมการบันทึกกิจกรรม…";
+      if (!window.liff) throw new Error("โหลด LINE ไม่สำเร็จ");
+      if (!initialized) { await liff.init({liffId:LIFF_ID}); initialized = true; }
+      const data = await callApi({action:"activity_session"});
+      if (!data.participant_id) throw new Error("ไม่พบรหัสผู้เข้าร่วม");
+      if (participant && participant !== data.participant_id) throw new Error("บัญชี LINE เปลี่ยน กรุณาเปิดหน้านี้ใหม่");
+      participant = data.participant_id;back.hidden=true;
+      status.textContent = "ระบบจะบันทึกการกดปุ่มไปทำกิจกรรมตามความยินยอมที่หน้าแรก";
+      return true;
     } catch (error) {
-      run.message.textContent = "ยังยืนยันการบันทึกไม่ได้: " + (error.name === "AbortError" ? "ระบบตอบกลับช้า" : error.message) + "\nโปรดคงหน้านี้ไว้แล้วกดลองบันทึกอีกครั้ง";
-      run.retry.hidden = false;
-      run.retry.onclick = () => saveEvent(run, type);
-    } finally { run.busy = false; run.complete.disabled = !run.openSaved || run.done; }
+      status.textContent = "ยังไม่เปิดการบันทึก: " + error.message + "\nคุณยังเปิดกิจกรรมได้ตามปกติ";
+      back.hidden=false;return false;
+    }
   }
-  const lastClicks = new Map();
-  function recordClick(event) {
-    const link = event.target.closest?.("#modalBody a.action-btn");
-    if (!link || !participant || (event.type === "auxclick" && event.button !== 1)) return;
-    const code = codeFor(link.href);
-    if (!code) { status.textContent = "กิจกรรมนี้ยังไม่ได้เชื่อมกับระบบบันทึก"; return; }
-    // Treat accidental double-clicks as the same opening. Later deliberate opens get a new run.
-    const now = Date.now();
-    if (now - (lastClicks.get(code) || 0) < 1200) return;
-    lastClicks.set(code,now);
-    const run = {id:crypto.randomUUID(),code,openSaved:false,done:false,busy:false};
-    const row = document.createElement("div"); row.className = "activity-run";
-    const title = document.createElement("strong"); title.textContent = catalog[code] + " · " + new Date().toLocaleTimeString("th-TH");
-    run.message = document.createElement("p"); run.message.setAttribute("role","status");
-    run.complete = document.createElement("button"); run.complete.type = "button";
-    run.complete.textContent = "ฉันทำกิจกรรมนี้เสร็จแล้ว"; run.complete.hidden = true;
-    run.complete.addEventListener("click",()=>saveEvent(run,"completed_self_report"));
-    run.retry = document.createElement("button"); run.retry.type="button"; run.retry.textContent="ลองบันทึกอีกครั้ง"; run.retry.hidden=true;
-    row.append(title,run.message,run.complete,run.retry);get("activityRuns").prepend(row);runs.push(run);
-    void saveEvent(run,"opened");
-    // Never prevent navigation or wait before opening external support services.
+  function removeRetry(run) {
+    if (run.retryRow) { run.retryRow.remove();retryRows.delete(run.retryRow);run.retryRow=null; }
   }
-  document.addEventListener("click",recordClick,true);
-  document.addEventListener("auxclick",recordClick,true);
-  const params = new URLSearchParams(location.search);
-  if (params.has("code") && params.has("state")) {
-    let time = 0;
-    try {time=Number(sessionStorage.getItem(CONSENT_KEY));sessionStorage.removeItem(CONSENT_KEY);}catch{}
-    const age=Date.now()-time;
-    if(time>0 && age>=0 && age<600000){consent.checked=true;void enableTracking();}
+  async function save(run) {
+    if(run.busy || run.saved)return;
+    run.busy=true;
+    if(run.retryButton)run.retryButton.disabled=true;
+    try {
+      if(!await readyPromise)throw new Error("ยังไม่ได้เชื่อมต่อหรือยืนยันความยินยอมที่หน้าแรก");
+      const data=await callApi({action:"save_activity",activity_code:run.code,event_type:"opened",run_id:run.id,expected_participant_id:participant});
+      if(data.run_id!==run.id || data.participant_id!==participant || data.activity_code!==run.code || data.event_type!=="opened")throw new Error("ผลตอบกลับไม่ตรงกับรายการที่ส่ง");
+      run.saved=true;removeRetry(run);
+      status.textContent="บันทึกการกดเปิดกิจกรรมแล้ว";
+    } catch(error) {
+      status.textContent="บางรายการยังบันทึกไม่สำเร็จ คุณยังใช้งานกิจกรรมได้ตามปกติ";
+      if(!run.retryRow){
+        run.retryRow=document.createElement("div");run.retryRow.style.cssText="font-size:14px;padding:10px;margin:8px 0;background:#fff5fb;border-radius:10px";
+        run.errorText=document.createElement("span");
+        run.retryButton=document.createElement("button");run.retryButton.type="button";run.retryButton.textContent="ลองบันทึกอีกครั้ง";
+        run.retryButton.style.cssText="margin-left:10px;padding:8px;border-radius:8px;cursor:pointer";
+        run.retryButton.addEventListener("click",async()=>{if(!participant)readyPromise=prepare();await save(run);});
+        run.retryRow.append(run.errorText,run.retryButton);retryBox.append(run.retryRow);retryRows.add(run.retryRow);
+      }
+      run.errorText.textContent=catalog[run.code]+": "+(error.name==="AbortError"?"ระบบตอบกลับช้า":error.message);
+    }finally{run.busy=false;if(run.retryButton)run.retryButton.disabled=false;}
   }
+  const lastClicks=new Map();
+  function track(event){
+    const link=event.target.closest?.("#modalBody a.action-btn");
+    if(!link || (event.type==="auxclick" && event.button!==1))return;
+    const code=codeFor(link.href);if(!code)return;
+    const now=Date.now();if(now-(lastClicks.get(code)||0)<1200)return;lastClicks.set(code,now);
+    // Count only the explicit link click, not merely opening the details card.
+    void save({id:crypto.randomUUID(),code,busy:false,saved:false});
+    // Do not delay or prevent normal navigation, including links to support services.
+  }
+  readyPromise=prepare();
+  document.addEventListener("click",track,true);
+  document.addEventListener("auxclick",track,true);
 })();
