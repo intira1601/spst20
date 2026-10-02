@@ -4,7 +4,7 @@
 const LIFF_ID = "2011737778-o7ntPvgO";
 const API_URL = "https://xbciyctqkwokpxlvxiro.supabase.co/functions/v1/research-api";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mMRYahDfhiPXDcj-Ui-0dg_LK0NR5-q";
-const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=research-v12";
+const REDIRECT_URL = "https://intira1601.github.io/spst20/?app=consent-v13";
 const PENDING_CONSENT_KEY = "spst20.pendingConsent.v12";
 
 const questions = [
@@ -160,7 +160,7 @@ function setupAssessment() {
         } catch { return true; }
     }
 
-    async function initializeLIFF() {
+    async function initializeLIFF(resuming = false) {
         if (!window.liff) throw new Error("โหลด LINE SDK ไม่สำเร็จ กรุณาตรวจอินเทอร์เน็ตแล้วเปิดหน้าใหม่");
         if (!liffReady) {
             status.textContent = "กำลังเชื่อมต่อ LINE…";
@@ -168,22 +168,26 @@ function setupAssessment() {
             liffReady = true;
         }
         if (!liff.isLoggedIn()) {
+            if (resuming) throw new Error("ยังเข้าสู่ระบบ LINE ไม่สำเร็จ กรุณากดลองเชื่อมต่ออีกครั้ง");
             if (liff.isInClient()) throw new Error("ไม่พบการเข้าสู่ระบบ LINE กรุณาปิดแล้วเปิดผ่าน LINE OA ใหม่");
             status.textContent = "กำลังไปหน้าเข้าสู่ระบบ LINE…";
-            // เก็บเฉพาะความยินยอมชั่วคราวในแท็บนี้ ไม่เก็บ token
-            try { sessionStorage.setItem(PENDING_CONSENT_KEY, String(Date.now())); } catch {}
             liff.login({ redirectUri: REDIRECT_URL });
             return false;
         }
         return true;
     }
 
-    connectButton.addEventListener("click", async () => {
+    async function connectResearch(resuming = false) {
         if (busy || participantId || !consent.checked) return;
         busy = true;
         updateControls();
         try {
-            if (!await initializeLIFF()) return;
+            // Save before init: LIFF initialization itself may redirect the page.
+            // Automatic resume must not extend the original 10-minute consent window.
+            if (!resuming) {
+                try { sessionStorage.setItem(PENDING_CONSENT_KEY, String(Date.now())); } catch {}
+            }
+            if (!await initializeLIFF(resuming)) return;
             const idToken = liff.getIDToken();
             if (!idToken) throw new Error("ไม่พบ LINE ID Token กรุณาตรวจว่า LIFF เปิด scope openid แล้ว จากนั้นปิดและเปิดหน้าใหม่");
             if (isTokenExpired(idToken)) {
@@ -218,6 +222,7 @@ function setupAssessment() {
                 throw new Error("API ไม่ส่ง participant_id ที่ถูกต้องกลับมา");
             }
             participantId = data.participant_id;
+            try { sessionStorage.removeItem(PENDING_CONSENT_KEY); } catch {}
             showReadyPage();
             status.textContent = "เชื่อมต่อสำเร็จ สามารถเริ่มทำแบบประเมินได้";
             connectButton.textContent = "เชื่อมต่อแล้ว";
@@ -232,26 +237,23 @@ function setupAssessment() {
             busy = false;
             updateControls();
         }
-    });
+    }
+    connectButton.addEventListener("click", () => connectResearch(false));
     updateControls();
     status.textContent = "";
 
-    // กลับจาก LINE: ใช้ความยินยอมที่เพิ่งกดในแท็บเดิมได้ครั้งเดียว ภายใน 10 นาที
-    const callbackParams = new URLSearchParams(window.location.search);
-    if (callbackParams.has("code") && callbackParams.has("state")) {
-        let consentTime = 0;
-        try {
-            consentTime = Number(sessionStorage.getItem(PENDING_CONSENT_KEY));
-            sessionStorage.removeItem(PENDING_CONSENT_KEY);
-        } catch {}
-        const age = Date.now() - consentTime;
-        if (consentTime > 0 && age >= 0 && age < 10 * 60 * 1000) {
-            consent.checked = true;
-            updateControls();
-            connectButton.click();
-        } else {
-            status.textContent = "กลับจาก LINE แล้ว กรุณายืนยันความยินยอมเพื่อดำเนินการต่อ";
-        }
+    // Resume only explicit recent consent in this tab, regardless of callback URL shape.
+    // Keep it across intermediate redirects; clear only after successful registration.
+    let consentTime = 0;
+    try { consentTime = Number(sessionStorage.getItem(PENDING_CONSENT_KEY)); } catch {}
+    const consentAge = Date.now() - consentTime;
+    if (consentTime > 0 && consentAge >= 0 && consentAge < 10 * 60 * 1000) {
+        consent.checked = true;
+        updateControls();
+        status.textContent = "กำลังดำเนินการต่อจากการยินยอมครั้งก่อน…";
+        void connectResearch(true);
+    } else {
+        try { sessionStorage.removeItem(PENDING_CONSENT_KEY); } catch {}
     }
 
     const saveStatus = document.createElement("p");
