@@ -1,3 +1,436 @@
 <!DOCTYPE html>
-<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>หายใจไปกับน้องหมี · Box Breathing</title><link rel="stylesheet" href="breathing.css?v=1"><script defer src="breathing.js?v=1"></script></head>
-<body data-mode="box"><main><div class="eyebrow">NURSE CARE BUDDY</div><h1>หายใจไปกับน้องหมี</h1><p class="subtitle">พักใจสักครู่ กับ Box Breathing</p><div class="stage"><div class="halo" id="halo" aria-hidden="true"></div><img class="mascot" id="mascot" src="nurse-bear.png" alt="น้องหมีสีขาวสวมหมวกพยาบาลถือหัวใจสีชมพู"></div><div class="steps" id="steps" aria-hidden="true"></div><h2 class="phase" id="phase" aria-live="polite">พร้อมแล้ว เริ่มไปด้วยกัน</h2><p class="count" id="count">เข้า 4 · กลั้น 4 · ออก 4 · พัก 4 วินาที</p><p class="instruction" id="instruction">กดเริ่ม แล้วค่อย ๆ หายใจตามจังหวะที่สบาย</p><div class="controls"><button id="toggle" type="button">เริ่มหายใจ</button><button id="reset" type="button">เริ่มใหม่</button></div><div class="session" id="session">เวลาฝึก 00:00</div><p class="note">ทำเท่าที่สบาย ไม่ฝืนกลั้นหายใจ หากไม่สบายให้หยุดพัก</p><a class="back" href="advice.html">← กลับหน้ากิจกรรม</a></main></body></html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฝึกหายใจ Box Breathing กับน้องหมีพยาบาล 🐻🩺</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Itim & Kanit for cute Thai typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            thai: ['Kanit', 'sans-serif'],
+            cute: ['Itim', 'cursive']
+          },
+          colors: {
+            nurse: {
+              blue: '#4a90e2',
+              softblue: '#dbeafe',
+              sky: '#70b2f5',
+              pink: '#ff8fb1',
+              softpink: '#fce7f3',
+              deepPink: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Soft floating ambient background */
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(105vh) scale(0.6) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.7;
+      }
+      80% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.1) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    .ambient-particle {
+      position: absolute;
+      pointer-events: none;
+      animation: floatParticle linear infinite;
+    }
+
+    /* Eye blinking */
+    @keyframes bearBlink {
+      0%, 96%, 100% {
+        transform: scaleY(1);
+      }
+      98% {
+        transform: scaleY(0.1);
+      }
+    }
+
+    .bear-eye {
+      transform-origin: center;
+      animation: bearBlink 4s infinite ease-in-out;
+    }
+
+    /* Subtle ear wiggle */
+    @keyframes earWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(2.5deg); }
+    }
+    .bear-ear-l { transform-origin: 35% 25%; animation: earWiggle 5s ease-in-out infinite; }
+    .bear-ear-r { transform-origin: 65% 25%; animation: earWiggle 5s ease-in-out infinite reverse; }
+
+    /* Heart glow pulsing */
+    @keyframes heartGlowPulse {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.45)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255, 100, 150, 0.85)); }
+    }
+    .heart-glow {
+      animation: heartGlowPulse 2.5s infinite ease-in-out;
+    }
+
+    /* Soft shadow on the bear */
+    .bear-wrapper {
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
+    }
+  [hidden]{display:none!important}.phase-badge{display:inline-block;padding:6px 16px;border-radius:99px;color:white;font-weight:bold}.bg-nurse-blue{background-color:#4a90e2}.active-side{background:#4a90e2!important;color:white!important}.bear-eye{transform-box:fill-box;transform-origin:center}.motion-paused .bear-eye,.motion-paused .bear-ear-l,.motion-paused .bear-ear-r,.motion-paused .heart-glow,.motion-paused .ambient-particle{animation-play-state:paused}@media(prefers-reduced-motion:reduce){.bear-eye,.bear-ear-l,.bear-ear-r,.heart-glow,.ambient-particle{animation:none!important}}@media(max-width:359px){main>div:first-child{width:280px!important;height:280px!important}}
+#bearContainer{width:260px;height:300px;cursor:default;transition:none!important}#bearContainer>svg{overflow:visible}#bearContainer g{transition:none!important}@media(max-width:359px){#bearContainer{width:230px;height:266px}}
+</style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#eaf4fe] via-[#f5f0fc] to-[#fdeef3] text-slate-700 flex flex-col items-center justify-between p-4 sm:p-6 overflow-x-hidden relative">
+
+  <!-- Floating Background Ambient Elements -->
+  <div id="ambient-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+  <!-- Header Section -->
+  <header class="w-full max-w-md flex items-center justify-between z-10 pt-2 pb-1">
+    <div class="flex items-center gap-2.5">
+      <div class="w-10 h-10 rounded-2xl bg-white shadow-md flex items-center justify-center border-2 border-nurse-softblue text-nurse-blue">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-slate-800 flex items-center gap-1 font-cute">
+          ฝึกหายใจกับน้องหมี <span class="text-nurse-pink">❤</span>
+        </h1>
+        <p class="text-xs text-slate-500">Box Breathing 4-4-4-4 ลดความเครียด คืนสมาธิ</p>
+      </div>
+    </div>
+
+    <!-- Sound & Haptic Button -->
+    <button id="soundToggle" class="p-2.5 rounded-2xl bg-white/80 hover:bg-white shadow-sm border border-slate-200 text-slate-600 transition flex items-center justify-center" title="เปิด/ปิดเสียงกระดิ่ง">
+      <svg id="soundIconOn" class="w-5 h-5 text-nurse-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+      </svg>
+      <svg id="soundIconOff" class="w-5 h-5 text-slate-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="w-full max-w-md flex flex-col items-center justify-center my-auto z-10 py-3">
+
+    <!-- Square Box Breathing Visualizer Container -->
+    <div class="relative w-[320px] h-[320px] sm:w-[350px] sm:h-[350px] flex items-center justify-center">
+
+      <!-- SVG Box Track & Progress Glow -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 350 350">
+        <defs>
+          <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#70b2f5" />
+            <stop offset="50%" stop-color="#ff8fb1" />
+            <stop offset="100%" stop-color="#818cf8" />
+          </linearGradient>
+          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Background Rounded Square Track -->
+        <rect x="25" y="25" width="300" height="300" rx="36" ry="36"
+              fill="rgba(255, 255, 255, 0.45)"
+              stroke="#e2e8f0" stroke-width="8" stroke-dasharray="6 6" />
+
+        <!-- Animated Stroke Path (Perimeter = ~1100) -->
+        <rect id="progressTrack" x="25" y="25" width="300" height="300" rx="36" ry="36"
+              fill="transparent"
+              stroke="url(#boxGrad)" stroke-width="9"
+              stroke-linecap="round"
+              filter="url(#softGlow)"
+              style="stroke-dasharray: 1100; stroke-dashoffset: 1100; transition: stroke-dashoffset 0.1s linear;" />
+      </svg>
+
+      <!-- Phase Indicators at 4 Sides -->
+      <div id="side-top" class="absolute -top-3 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 text-slate-500 shadow-sm border border-slate-100 transition-all duration-300">
+        1. สูดหายใจเข้า (4s)
+      </div>
+      <div id="side-right" class="absolute -right-3 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 text-slate-500 shadow-sm border border-slate-100 rotate-90 transition-all duration-300">
+        2. กลั้นค้างไว้ (4s)
+      </div>
+      <div id="side-bottom" class="absolute -bottom-3 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 text-slate-500 shadow-sm border border-slate-100 transition-all duration-300">
+        3. ผ่อนลมออก (4s)
+      </div>
+      <div id="side-left" class="absolute -left-3 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 text-slate-500 shadow-sm border border-slate-100 -rotate-90 transition-all duration-300">
+        4. กลั้นพักใจ (4s)
+      </div>
+
+      <!-- Interactive 3D style Bear Character -->
+      <div id="bearContainer" class="bear-wrapper relative w-56 h-56 sm:w-60 sm:h-60 flex items-center justify-center transform origin-bottom cursor-pointer">
+<svg viewBox="0 0 400 510" class="w-full h-full" role="img" aria-label="น้องหมีพยาบาลขยับตามจังหวะหายใจ"><g id="bearBody" style="transform-box:view-box;transform-origin:200px 440px"><svg x="87" y="267" width="226" height="192" viewBox="175 230 950 810" overflow="visible"><image href="bear-body.png" width="1301" height="1209"/></svg></g><g id="bearFeet" style="transform-box:view-box;transform-origin:200px 440px"><svg x="88" y="414" width="224" height="72" viewBox="310 275 1155 390" overflow="visible"><image href="bear-feet.png" width="1774" height="887"/></svg></g><g id="bearHead" style="transform-box:view-box;transform-origin:200px 440px"><svg x="45" y="20" width="310" height="292" viewBox="30 80 1195 1130" overflow="visible"><image href="bear-head.png" width="1254" height="1254"/></svg></g><g id="huggedHeart" style="transform-box:view-box;transform-origin:200px 440px"><svg x="80" y="292" width="240" height="104" viewBox="170 135 1440 645" overflow="visible"><image href="bear-arms-heart.png" width="1774" height="887"/></svg></g></svg>   </div>
+
+    </div>
+
+    <!-- Breathing State Guide and Timer -->
+    <div class="mt-4 text-center w-full px-4">
+      <div id="phaseBadge" class="inline-block px-4 py-1.5 rounded-full text-base font-bold bg-nurse-blue text-white shadow-md transition-all duration-300">
+        พร้อมเริ่มทำสมาธิ
+      </div>
+
+      <div class="mt-2 flex items-baseline justify-center gap-1">
+        <span id="countdownDisplay" class="text-6xl font-extrabold text-slate-800 tracking-tight font-cute">4</span>
+        <span class="text-sm font-semibold text-slate-500">วินาที</span>
+      </div>
+
+      <!-- Nurse Bear's Encouraging Message -->
+      <div class="h-10 mt-1 flex items-center justify-center">
+        <p id="quoteDisplay" class="text-sm sm:text-base font-medium text-slate-600 transition-opacity duration-300 max-w-xs">
+          "กดปุ่มเริ่ม แล้วหายใจตามจังหวะน้องหมีได้เลยนะคะ ✨"
+        </p>
+      </div>
+
+      <!-- Stats Bar: Cycle count & Total Mindful Time -->
+      <div class="mt-3 flex items-center justify-center gap-6 text-xs text-slate-500">
+        <div class="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-xl border border-slate-200/60 shadow-xs">
+          <span>รอบที่เสร็จสิ้น:</span>
+          <span id="completedCycles" class="font-bold text-nurse-blue text-sm">0</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-white/80 px-3 py-1.5 rounded-xl border border-slate-200/60 shadow-xs">
+          <span>เวลารวม:</span>
+          <span id="totalTime" class="font-bold text-slate-700 text-sm">00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Controls -->
+    <div class="mt-5 flex items-center gap-3">
+      <!-- Reset Button -->
+      <button id="resetBtn" class="p-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 shadow-sm active:scale-95 transition" title="รีเซ็ต">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+      </button>
+
+      <!-- Main Start / Pause Button -->
+      <button id="playPauseBtn" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-nurse-blue to-nurse-sky hover:brightness-105 active:scale-95 text-white font-semibold text-lg shadow-lg shadow-blue-400/30 flex items-center gap-2.5 transition">
+        <svg id="playIcon" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg id="pauseIcon" class="w-6 h-6 fill-current hidden" viewBox="0 0 24 24">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+        <span id="playBtnText">เริ่มฝึกหายใจ</span>
+      </button>
+
+      <!-- Pace Selector Button (Toggle 3s, 4s, 5s) -->
+      <button id="paceBtn" class="px-3.5 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm active:scale-95 text-xs font-semibold flex items-center gap-1 transition" title="ปรับระยะเวลาต่อด้าน">
+        <span>จังหวะ</span>
+        <span id="paceValue" class="text-nurse-pink font-bold text-sm">4s</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer Tip -->
+  <footer class="w-full max-w-md text-center py-2 z-10">
+    <p class="text-[11px] text-slate-400">
+      ฝึกเท่าที่สบาย ไม่ฝืนกลั้นหายใจ หากไม่สบายให้หยุดพัก 💙
+    </p>
+  <a href="advice.html" style="display:inline-block;margin:12px;color:#4a90e2">← กลับหน้ากิจกรรม</a></footer>
+
+  <script>
+    /* Audio System using Web Audio API (Calming Zen Bell / Singing Bowl Chime) */
+    class RelaxAudio {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playBell(phaseIndex) {
+        if (this.isMuted) return;
+        this.init();
+
+        // 4 calming pentatonic frequencies for the 4 corners: F4, A4, C5, E5
+        const frequencies = [349.23, 440.00, 523.25, 659.25];
+        const freq = frequencies[phaseIndex % frequencies.length];
+        const now = this.ctx.currentTime;
+
+        // Primary bell tone
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        // Harmonic overtone for Tibetan bowl depth
+        const overtone = this.ctx.createOscillator();
+        const overtoneGain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        overtone.type = 'sine';
+        overtone.frequency.setValueAtTime(freq * 2.76, now); // Gentle bell dissonance
+
+        // Primary envelope: soft attack, long decaying release
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.28, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+
+        // Overtone envelope
+        overtoneGain.gain.setValueAtTime(0, now);
+        overtoneGain.gain.linearRampToValueAtTime(0.08, now + 0.05);
+        overtoneGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+
+        osc.connect(gain);
+        overtone.connect(overtoneGain);
+        gain.connect(this.ctx.destination);
+        overtoneGain.connect(this.ctx.destination);
+
+        osc.start(now);
+        overtone.start(now);
+        osc.stop(now + 2.8);
+        overtone.stop(now + 1.6);
+      }
+    }
+
+    const soundManager = new RelaxAudio();
+
+    // Box Breathing 4 Phases Configuration
+    const PHASES = [
+      {
+        id: 'inhale',
+        name: 'สูดหายใจเข้า',
+        quote: '"หายใจเข้าช้า ๆ เท่าที่สบาย ไปพร้อมกับน้องหมีนะ 🌸"',
+        sideId: 'side-top',
+        badgeColor: 'bg-nurse-blue',
+        scale: 1.15, // Bear breathes in
+        heartScale: 1.25,
+        trackOffsetStart: 1100,
+        trackOffsetEnd: 825
+      },
+      {
+        id: 'hold1',
+        name: 'กลั้นลมหายใจ',
+        quote: '"นิ่งสงบสักครู่ กอดหัวใจอบอุ่นดวงนี้ไว้นะคะ 💖"',
+        sideId: 'side-right',
+        badgeColor: 'bg-amber-400',
+        scale: 1.15, // Hold full
+        heartScale: 1.28,
+        trackOffsetStart: 825,
+        trackOffsetEnd: 550
+      },
+      {
+        id: 'exhale',
+        name: 'ผ่อนลมหายใจออก',
+        quote: '"ค่อยๆ ปล่อยลมหายใจและทุกความกังวลออกไปช้าๆ 🍃"',
+        sideId: 'side-bottom',
+        badgeColor: 'bg-nurse-pink',
+        scale: 0.95, // Bear shrinks
+        heartScale: 0.92,
+        trackOffsetStart: 550,
+        trackOffsetEnd: 275
+      },
+      {
+        id: 'hold2',
+        name: 'กลั้นพักใจ',
+        quote: '"ผ่อนคลายร่างกาย รักษาสมาธิอันแสนสบายไว้นะ ☁️"',
+        sideId: 'side-left',
+        badgeColor: 'bg-indigo-400',
+        scale: 0.95, // Hold empty
+        heartScale: 0.95,
+        trackOffsetStart: 275,
+        trackOffsetEnd: 0
+      }
+    ];
+
+    const diaphragm = document.body.dataset.mode === 'diaphragmatic';
+    const phases = diaphragm ? [PHASES[0], PHASES[2]] : PHASES;
+    const get = id => document.getElementById(id);
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    let running = false, elapsed = 0, previous = null, frame = null, lastPhase = -1, pace = 4;
+    const bear = get('bearContainer'), heart = get('huggedHeart'), track = get('progressTrack');
+    const length = track.getTotalLength();
+    track.style.strokeDasharray = String(length);
+    track.style.transition = 'none';
+    bear.style.transition = heart.style.transition = 'none';
+    function pose(amount){
+ const a=reduced.matches?0:amount;
+ bear.style.transform='none';
+ get('bearBody').style.transform='scale('+(1+.16*a)+','+(1+.11*a)+')';
+ get('bearHead').style.transform='translateY('+(-12*a)+'px)';
+ heart.style.transform='translateY('+(-23*a)+'px)';
+ get('bearFeet').style.transform='none';
+}
+    get('phaseBadge').setAttribute('aria-live','polite');
+    get('soundToggle').setAttribute('aria-label','เปิดหรือปิดเสียงกระดิ่ง');
+    get('resetBtn').setAttribute('aria-label','เริ่มใหม่');
+    function bell(i){try{soundManager.playBell(i);}catch{soundManager.isMuted=true;get('soundIconOn').classList.add('hidden');get('soundIconOff').classList.remove('hidden');}}
+    function duration(i){return (diaphragm ? (i===0?4:5) : pace)*1000;}
+    function render(sound=true){
+      const cycle=phases.reduce((n,p,i)=>n+duration(i),0);
+      let within=elapsed%cycle,index=0;
+      while(index<phases.length-1 && within>=duration(index)){within-=duration(index);index++;}
+      const p=phases[index],f=within/duration(index),e=(1-Math.cos(Math.PI*f))/2;
+      const amount=p.id==='inhale'?e:p.id==='exhale'?1-e:p.id==='hold1'?1:0;
+      pose(amount);
+      track.style.strokeDashoffset=String(length*(1-(elapsed%cycle)/cycle));
+      get('countdownDisplay').textContent=Math.max(1,Math.ceil((duration(index)-within)/1000));
+      get('completedCycles').textContent=Math.floor(elapsed/cycle);
+      const seconds=Math.floor(elapsed/1000);get('totalTime').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+      if(index!==lastPhase){
+        get('phaseBadge').textContent=p.name;
+        get('phaseBadge').className='phase-badge '+p.badgeColor;
+        get('quoteDisplay').textContent=p.quote;
+        for(const id of ['side-top','side-right','side-bottom','side-left'])get(id).classList.toggle('active-side',id===p.sideId);
+        lastPhase=index;if(sound)bell(index);
+      }
+    }
+    function tick(now){if(!running)return;if(previous!==null)elapsed+=now-previous;previous=now;render();frame=requestAnimationFrame(tick);}
+    function pause(){running=false;previous=null;cancelAnimationFrame(frame);document.body.classList.add('motion-paused');get('playIcon').classList.remove('hidden');get('pauseIcon').classList.add('hidden');get('playBtnText').textContent='ทำต่อ';}
+    function reset(){pause();elapsed=0;lastPhase=-1;track.style.strokeDashoffset=length;pose(0);get('countdownDisplay').textContent=diaphragm?4:pace;get('completedCycles').textContent='0';get('totalTime').textContent='00:00';get('playBtnText').textContent='เริ่มฝึกหายใจ';get('phaseBadge').textContent='พร้อมเริ่มฝึกหายใจ';get('phaseBadge').className='phase-badge bg-nurse-blue';get('quoteDisplay').textContent='กดปุ่มเริ่ม แล้วหายใจตามจังหวะน้องหมีได้เลยนะคะ ✨';for(const id of ['side-top','side-right','side-bottom','side-left'])get(id).classList.remove('active-side');}
+    get('playPauseBtn').addEventListener('click',()=>{if(running){pause();return;}running=true;previous=null;document.body.classList.remove('motion-paused');get('playIcon').classList.add('hidden');get('pauseIcon').classList.remove('hidden');get('playBtnText').textContent='หยุดชั่วคราว';render();frame=requestAnimationFrame(tick);});
+    get('resetBtn').addEventListener('click',reset);
+    if(diaphragm){get('paceBtn').hidden=true;get('side-top').textContent='1. หายใจเข้า (4s)';get('side-bottom').textContent='2. ผ่อนลมออก (5s)';get('side-right').hidden=get('side-left').hidden=true;}
+    else get('paceBtn').addEventListener('click',()=>{const options=[3,4,5,6];pace=options[(options.indexOf(pace)+1)%4];get('paceValue').textContent=pace+'s';['side-top','side-right','side-bottom','side-left'].forEach((id,i)=>get(id).textContent=(i+1)+'. '+phases[i].name+' ('+pace+'s)');reset();});
+    get('soundToggle').addEventListener('click',()=>{soundManager.isMuted=!soundManager.isMuted;get('soundIconOn').classList.toggle('hidden',soundManager.isMuted);get('soundIconOff').classList.toggle('hidden',!soundManager.isMuted);if(!soundManager.isMuted)bell(0);});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)pause();});
+    reduced.addEventListener('change',()=>{if(elapsed>0)render(false);});
+    const ambient=get('ambient-container');
+    for(let i=0;i<10;i++){const el=document.createElement('span');el.className='ambient-particle';el.textContent=['🤍','✨','🌸','💙'][i%4];el.style.left=(i*10+3)+'%';el.style.animationDuration=(16+i)+'s';el.style.animationDelay=(-i*2)+'s';ambient.append(el);}
+    reset();
+
+  </script>
+</body>
+</html>
