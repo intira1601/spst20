@@ -135,9 +135,10 @@ h1 {
     text-decoration: underline;
 }
 </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
 
-<body>
+<body data-activity="music">
 
 <div class="container">
 
@@ -179,7 +180,7 @@ h1 {
                 href="https://www.youtube.com/watch?v=eQ6--TNre9k"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="music-button"
+                class="music-button" data-activity-outbound
             >
                 🎧 เปิดเพลงบน YouTube
             </a>
@@ -215,7 +216,7 @@ h1 {
                 href="https://www.youtube.com/watch?v=Lp6XlsBm_Lw"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="music-button"
+                class="music-button" data-activity-outbound
             >
                 🎧 เปิดเพลงบน YouTube
             </a>
@@ -251,7 +252,7 @@ h1 {
                 href="https://www.youtube.com/watch?v=6obKeeH7cQc"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="music-button"
+                class="music-button" data-activity-outbound
             >
                 🎧 เปิดเพลงบน YouTube
             </a>
@@ -280,5 +281,6 @@ h1 {
 
 </div>
 
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>

@@ -1005,7 +1005,7 @@ function openModal(index) {
         btnHtml = `
 
             <a
-                href="${data.actionLink}"
+                href="${window.activityDestination(data.actionLink)}"
                 class="action-btn"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1121,7 +1121,7 @@ document.addEventListener(
 
 </script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="activity-tracker.js?v=2"></script>
+<script src="activity-catalog.js?v=3"></script><script src="activity-tracker.js?v=3"></script>
 
 </body>
 </html>

@@ -230,9 +230,10 @@
             }
         }
     </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
 
-<body>
+<body data-activity="battery">
 
     <div class="container">
 
@@ -277,31 +278,31 @@
 
             <button
                 class="level-btn"
-                onclick="selectBattery(0)">
+                data-activity-start onclick="selectBattery(0)">
                 0%
             </button>
 
             <button
                 class="level-btn"
-                onclick="selectBattery(20)">
+                data-activity-start onclick="selectBattery(20)">
                 20%
             </button>
 
             <button
                 class="level-btn"
-                onclick="selectBattery(50)">
+                data-activity-start onclick="selectBattery(50)">
                 50%
             </button>
 
             <button
                 class="level-btn"
-                onclick="selectBattery(80)">
+                data-activity-start onclick="selectBattery(80)">
                 80%
             </button>
 
             <button
                 class="level-btn"
-                onclick="selectBattery(100)">
+                data-activity-start onclick="selectBattery(100)">
                 100%
             </button>
 
@@ -536,5 +537,6 @@
 
     </script>
 
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>

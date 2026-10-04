@@ -35,8 +35,9 @@
         
         button.btn { background: linear-gradient(135deg, #a78bfa, #ec4899); color: white; border: none; padding: 15px 30px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.22); margin-top: 20px; text-decoration: none; display: inline-block; }
     </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
-<body>
+<body data-activity="grounding">
 
     <div id="gameUI" class="game-container">
         <h1>🎈 Tap & Pop</h1>
@@ -105,6 +106,7 @@
 
             bubble.addEventListener("click", function() {
                 if (!this.classList.contains("popped")) {
+                    window.ActivityTelemetry?.start();
                     this.classList.add("popped");
                     bubblesLeft--;
                     
@@ -123,5 +125,6 @@
         // เริ่มเกมด่านแรก
         loadStage(currentStage);
     </script>
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>

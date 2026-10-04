@@ -105,9 +105,10 @@
   [hidden]{display:none!important}.phase-badge{display:inline-block;padding:6px 16px;border-radius:99px;color:white;font-weight:bold}.bg-nurse-blue{background-color:#4a90e2}.active-side{background:#4a90e2!important;color:white!important}.bear-eye{transform-box:fill-box;transform-origin:center}.motion-paused .bear-eye,.motion-paused .bear-ear-l,.motion-paused .bear-ear-r,.motion-paused .heart-glow,.motion-paused .ambient-particle{animation-play-state:paused}@media(prefers-reduced-motion:reduce){.bear-eye,.bear-ear-l,.bear-ear-r,.heart-glow,.ambient-particle{animation:none!important}}@media(max-width:359px){main>div:first-child{width:280px!important;height:280px!important}}
 #bearContainer{width:260px;height:300px;cursor:default;transition:none!important}#bearContainer>svg{overflow:visible}#bearContainer g{transition:none!important}@media(max-width:359px){#bearContainer{width:230px;height:266px}}
 </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
 
-<body data-mode="diaphragmatic" class="min-h-screen bg-gradient-to-b from-[#eaf4fe] via-[#f5f0fc] to-[#fdeef3] text-slate-700 flex flex-col items-center justify-between p-4 sm:p-6 overflow-x-hidden relative">
+<body data-activity="diaphragmatic" data-mode="diaphragmatic" class="min-h-screen bg-gradient-to-b from-[#eaf4fe] via-[#f5f0fc] to-[#fdeef3] text-slate-700 flex flex-col items-center justify-between p-4 sm:p-6 overflow-x-hidden relative">
 
   <!-- Floating Background Ambient Elements -->
   <div id="ambient-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
@@ -420,7 +421,7 @@
     function tick(now){if(!running)return;if(previous!==null)elapsed+=now-previous;previous=now;render();frame=requestAnimationFrame(tick);}
     function pause(){running=false;previous=null;cancelAnimationFrame(frame);document.body.classList.add('motion-paused');get('playIcon').classList.remove('hidden');get('pauseIcon').classList.add('hidden');get('playBtnText').textContent='ทำต่อ';}
     function reset(){pause();elapsed=0;lastPhase=-1;track.style.strokeDashoffset=length;pose(0);get('countdownDisplay').textContent=diaphragm?4:pace;get('completedCycles').textContent='0';get('totalTime').textContent='00:00';get('playBtnText').textContent='เริ่มฝึกหายใจ';get('phaseBadge').textContent='พร้อมเริ่มฝึกหายใจ';get('phaseBadge').className='phase-badge bg-nurse-blue';get('quoteDisplay').textContent='กดปุ่มเริ่ม แล้วหายใจตามจังหวะน้องหมีได้เลยนะคะ ✨';for(const id of ['side-top','side-right','side-bottom','side-left'])get(id).classList.remove('active-side');}
-    get('playPauseBtn').addEventListener('click',()=>{if(running){pause();return;}running=true;previous=null;document.body.classList.remove('motion-paused');get('playIcon').classList.add('hidden');get('pauseIcon').classList.remove('hidden');get('playBtnText').textContent='หยุดชั่วคราว';render();frame=requestAnimationFrame(tick);});
+    get('playPauseBtn').addEventListener('click',()=>{if(running){pause();return;}running=true;window.ActivityTelemetry?.start();previous=null;document.body.classList.remove('motion-paused');get('playIcon').classList.add('hidden');get('pauseIcon').classList.remove('hidden');get('playBtnText').textContent='หยุดชั่วคราว';render();frame=requestAnimationFrame(tick);});
     get('resetBtn').addEventListener('click',reset);
     if(diaphragm){get('paceBtn').hidden=true;get('side-top').textContent='1. หายใจเข้า (4s)';get('side-bottom').textContent='2. ผ่อนลมออก (5s)';get('side-right').hidden=get('side-left').hidden=true;}
     else get('paceBtn').addEventListener('click',()=>{const options=[3,4,5,6];pace=options[(options.indexOf(pace)+1)%4];get('paceValue').textContent=pace+'s';['side-top','side-right','side-bottom','side-left'].forEach((id,i)=>get(id).textContent=(i+1)+'. '+phases[i].name+' ('+pace+'s)');reset();});
@@ -432,5 +433,6 @@
     reset();
 
   </script>
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>

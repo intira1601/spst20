@@ -227,9 +227,10 @@
     background: #e9d5ff;
 }
     </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
 
-<body>
+<body data-activity="bag">
 
     <div class="container">
 
@@ -281,7 +282,7 @@
 
        <button
     class="back-btn"
-    onclick="history.back()"
+    onclick="location.href='advice.html'"
 >
     💜 กลับไปคำแนะนำ
 </button>
@@ -301,6 +302,7 @@
 
         if (!item.classList.contains("removed")) {
 
+            window.ActivityTelemetry?.start();
             item.classList.add("removed");
 
             item.style.display = "none";
@@ -353,5 +355,6 @@ function updateWeight() {
 
     </script>
 
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>

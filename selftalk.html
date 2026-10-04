@@ -187,9 +187,10 @@ audio {
     text-decoration: underline;
 }
 </style>
+<link rel="stylesheet" href="activity-recording.css?v=3">
 </head>
 
-<body>
+<body data-activity="self_talk">
 
 <div class="container">
 
@@ -301,6 +302,7 @@ let audioUrl = null;
 ========================= */
 
 function randomQuote() {
+    window.ActivityTelemetry?.start();
 
     const randomIndex =
         Math.floor(Math.random() * quotes.length);
@@ -468,6 +470,7 @@ async function startRecording() {
 
         // เริ่มอัด
         mediaRecorder.start();
+        window.ActivityTelemetry?.start();
 
 
         document.getElementById("status").textContent =
@@ -533,5 +536,6 @@ function stopRecording() {
 
 </script>
 
+<script src="activity-catalog.js?v=3"></script><script src="activity-telemetry.js?v=3"></script>
 </body>
 </html>
